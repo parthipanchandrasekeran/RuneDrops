@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using RuneDrop.Player;
 using RuneDrop.Core;
-using RuneDrop.UI;
 
 namespace RuneDrop.Decision
 {

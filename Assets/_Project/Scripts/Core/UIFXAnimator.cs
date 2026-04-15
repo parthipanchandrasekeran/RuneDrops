@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace RuneDrop.UI
+namespace RuneDrop.Core
 {
     /// <summary>
     /// Lightweight entrance animation for runtime-generated UI canvases.

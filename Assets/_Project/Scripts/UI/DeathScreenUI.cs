@@ -110,8 +110,8 @@ namespace RuneDrop.UI
             _depthText = UIHelper.MakeText(ct, "Depth", new Vector2(0.5f, 0.61f), "Depth: 0m", 44, UIHelper.TextWhite);
             _runesText = UIHelper.MakeText(ct, "Runes", new Vector2(0.5f, 0.54f), "Runes: 0", 42, UIHelper.TextWhite);
             _shardsText = UIHelper.MakeGlowText(ct, "Shards", new Vector2(0.5f, 0.46f), "+0 Soul Shards", 46, UIHelper.AccentPurple);
-            _bestText = UIHelper.MakeText(ct, "Best", new Vector2(0.5f, 0.39f), "Best: 0m", 28, UIHelper.TextDim, UnityEngine.UI.TextAnchor.MiddleCenter, 900, 50);
-            _goalText = UIHelper.MakeText(ct, "Goal", new Vector2(0.5f, 0.34f), "0m to next milestone", 24, UIHelper.AccentCyan, UnityEngine.UI.TextAnchor.MiddleCenter, 900, 50);
+            _bestText = UIHelper.MakeText(ct, "Best", new Vector2(0.5f, 0.39f), "Best: 0m", 28, UIHelper.TextDim, TextAnchor.MiddleCenter, 900, 50);
+            _goalText = UIHelper.MakeText(ct, "Goal", new Vector2(0.5f, 0.34f), "0m to next milestone", 24, UIHelper.AccentCyan, TextAnchor.MiddleCenter, 900, 50);
 
             UIHelper.MakeButton(ct, "Retry", new Vector2(0.05f, 0.08f), new Vector2(0.48f, 0.2f),
                 "RETRY", 42, new Color(0.08f, 0.28f, 0.2f, 0.96f), UIHelper.AccentGreen);
