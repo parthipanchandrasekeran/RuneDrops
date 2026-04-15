@@ -27,13 +27,14 @@ namespace RuneDrop.UI
 
         private SettingsScreenUI _settings;
         private LeaderboardScreenUI _leaderboard;
+        private PowersReferenceUI _powers;
 
         private void Start()
         {
             CreateUI();
             RefreshEngagementMeta();
-            _settings = FindFirstObjectByType<SettingsScreenUI>();
-            _leaderboard = FindFirstObjectByType<LeaderboardScreenUI>();
+            // Don't find Settings/Leaderboard here — they may not exist yet
+            // (created by MainMenuBootstrap AFTER MainMenuUI)
         }
 
         private void Update()
@@ -87,19 +88,42 @@ namespace RuneDrop.UI
                 return;
             }
 
-            if (nx < 0.47f && ny < 0.12f && _settings != null)
+            // Powers reference — center, y 0.13-0.20
+            if (nx > 0.2f && nx < 0.8f && ny > 0.12f && ny < 0.22f)
             {
-                UIHelper.LightHaptic();
-                _canvas.gameObject.SetActive(false);
-                _settings.Open(() => _canvas.gameObject.SetActive(true));
+                if (_powers == null) _powers = FindFirstObjectByType<PowersReferenceUI>();
+                if (_powers != null)
+                {
+                    UIHelper.LightHaptic();
+                    _canvas.gameObject.SetActive(false);
+                    _powers.Open(() => _canvas.gameObject.SetActive(true));
+                }
                 return;
             }
 
-            if (nx > 0.53f && ny < 0.12f && _leaderboard != null)
+            // Settings button — left side, bottom strip
+            if (nx < 0.47f && ny < 0.11f)
             {
-                UIHelper.LightHaptic();
-                _canvas.gameObject.SetActive(false);
-                _leaderboard.Open(() => _canvas.gameObject.SetActive(true));
+                if (_settings == null) _settings = FindFirstObjectByType<SettingsScreenUI>();
+                if (_settings != null)
+                {
+                    UIHelper.LightHaptic();
+                    _canvas.gameObject.SetActive(false);
+                    _settings.Open(() => _canvas.gameObject.SetActive(true));
+                }
+                return;
+            }
+
+            // Leaderboard button — right side, bottom strip
+            if (nx > 0.53f && ny < 0.11f)
+            {
+                if (_leaderboard == null) _leaderboard = FindFirstObjectByType<LeaderboardScreenUI>();
+                if (_leaderboard != null)
+                {
+                    UIHelper.LightHaptic();
+                    _canvas.gameObject.SetActive(false);
+                    _leaderboard.Open(() => _canvas.gameObject.SetActive(true));
+                }
                 return;
             }
         }
@@ -169,7 +193,11 @@ namespace RuneDrop.UI
             _playerNameText = UIHelper.MakeText(ct, "PlayerName", new Vector2(0.5f, 0.28f), "Adventurer", 28, UIHelper.AccentCyan);
             _streakText = UIHelper.MakeText(ct, "Streak", new Vector2(0.5f, 0.255f), "", 19, UIHelper.AccentGold);
             _dailyGoalText = UIHelper.MakeText(ct, "DailyGoal", new Vector2(0.5f, 0.232f), "", 18, UIHelper.TextDim);
-            UIHelper.MakeText(ct, "Controls", new Vector2(0.5f, 0.205f), "Drag: Move · Tap: Anchor · Chase the glow", 20, UIHelper.TextMuted);
+            UIHelper.MakeText(ct, "Controls", new Vector2(0.5f, 0.22f), "Drag: Move · Tap: Anchor · Chase the glow", 20, UIHelper.TextMuted);
+
+            // Powers reference button (center, above bottom buttons)
+            UIHelper.MakeButton(ct, "Powers", new Vector2(0.2f, 0.13f), new Vector2(0.8f, 0.20f),
+                "VIEW ALL POWERS", 30, new Color(0.15f, 0.1f, 0.22f, 0.95f), UIHelper.AccentPurple);
             UIHelper.MakeText(ct, "Rule", new Vector2(0.5f, 0.178f), "Red hazards hurt · Rune colors power combos", 20, UIHelper.TextDim);
 
             UIHelper.MakeButton(ct, "Settings", new Vector2(0.05f, 0.035f), new Vector2(0.47f, 0.115f), "SETTINGS", 30, new Color(0.12f, 0.16f, 0.26f, 0.95f), UIHelper.AccentCyan);

@@ -69,6 +69,10 @@ namespace RuneDrop.UI
             var leaderboardGO = new GameObject("LeaderboardScreenUI");
             leaderboardGO.AddComponent<LeaderboardScreenUI>();
 
+            // Powers reference
+            var powersGO = new GameObject("PowersReferenceUI");
+            powersGO.AddComponent<PowersReferenceUI>();
+
             // Back button handler
             var backGO = new GameObject("BackButtonHandler");
             backGO.AddComponent<BackButtonHandler>();
