@@ -1,0 +1,1 @@
+D:\AndroidStudioProjects\RuneDrops\Library\Bee\Android\Prj\Mono2x\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\5l92xp6b\obj\armeabi-v7a

@@ -70,13 +70,15 @@ namespace RuneDrop.UI
             _depthLabel = UIHelper.MakeText(ct, "DepthLabel", new Vector2(0.5f, 0.938f),
                 "meters", 22, UIHelper.TextDim);
 
-            // ── Rune slots (left side, colored squares) ─────────────
-            _runeSlotAImg = CreateRuneSlot(ct, "SlotA", new Vector2(0.08f, 0.955f));
-            _runeSlotBImg = CreateRuneSlot(ct, "SlotB", new Vector2(0.17f, 0.955f));
-            _runeSlotAText = UIHelper.MakeText(ct, "SlotAText", new Vector2(0.08f, 0.955f),
-                "", 20, UIHelper.TextWhite, TextAnchor.MiddleCenter, 60, 60);
-            _runeSlotBText = UIHelper.MakeText(ct, "SlotBText", new Vector2(0.17f, 0.955f),
-                "", 20, UIHelper.TextWhite, TextAnchor.MiddleCenter, 60, 60);
+            // ── Rune slots (left side, wider with full names) ──────
+            UIHelper.MakeText(ct, "SlotLabel", new Vector2(0.12f, 0.935f),
+                "RUNES:", 16, UIHelper.TextMuted, TextAnchor.MiddleCenter, 100, 30);
+            _runeSlotAImg = CreateRuneSlot(ct, "SlotA", new Vector2(0.09f, 0.96f));
+            _runeSlotBImg = CreateRuneSlot(ct, "SlotB", new Vector2(0.22f, 0.96f));
+            _runeSlotAText = UIHelper.MakeText(ct, "SlotAText", new Vector2(0.09f, 0.96f),
+                "--", 18, UIHelper.TextDim, TextAnchor.MiddleCenter, 100, 40);
+            _runeSlotBText = UIHelper.MakeText(ct, "SlotBText", new Vector2(0.22f, 0.96f),
+                "--", 18, UIHelper.TextDim, TextAnchor.MiddleCenter, 100, 40);
 
             // ── Anchor dots (right side) ────────────────────────────
             _anchorDots = new Image[5]; // Max possible anchors
@@ -113,8 +115,8 @@ namespace RuneDrop.UI
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
             var rect = go.AddComponent<RectTransform>();
-            rect.anchorMin = new Vector2(anchor.x - 0.03f, anchor.y - 0.015f);
-            rect.anchorMax = new Vector2(anchor.x + 0.03f, anchor.y + 0.015f);
+            rect.anchorMin = new Vector2(anchor.x - 0.055f, anchor.y - 0.015f);
+            rect.anchorMax = new Vector2(anchor.x + 0.055f, anchor.y + 0.015f);
             rect.sizeDelta = Vector2.zero;
             rect.offsetMin = Vector2.zero;
             rect.offsetMax = Vector2.zero;
@@ -146,20 +148,23 @@ namespace RuneDrop.UI
             if (type == RuneType.None)
             {
                 bg.color = new Color(0.15f, 0.1f, 0.2f, 0.8f);
-                label.text = "";
+                label.text = "empty";
+                label.fontSize = 14;
+                label.color = new Color(0.3f, 0.25f, 0.35f);
             }
             else
             {
                 Color c = GetRuneColor(type);
-                bg.color = new Color(c.r * 0.4f, c.g * 0.4f, c.b * 0.4f, 0.9f);
+                bg.color = new Color(c.r * 0.3f, c.g * 0.3f, c.b * 0.3f, 0.9f);
                 label.text = type switch
                 {
-                    RuneType.Fire => "F",
-                    RuneType.Wind => "W",
-                    RuneType.Shadow => "S",
-                    RuneType.Earth => "E",
+                    RuneType.Fire => "FIRE",
+                    RuneType.Wind => "WIND",
+                    RuneType.Shadow => "SHADOW",
+                    RuneType.Earth => "EARTH",
                     _ => "?"
                 };
+                label.fontSize = 16;
                 label.color = c;
             }
         }

@@ -64,7 +64,7 @@ namespace RuneDrop.UI
                 }
             }
 
-            SpawnFloatingText(desc, 30, color, new Vector2(0.5f, 0.72f), 2.5f);
+            SpawnFloatingText(desc, 30, color, new Vector2(0.5f, 0.45f), 2.5f);
         }
 
         private void OnComboActivated(ComboActivatedEvent evt)
@@ -77,13 +77,13 @@ namespace RuneDrop.UI
                 ComboType.ExplosiveShield => "EXPLOSIVE SHIELD!\nNext hit won't kill you\n+ it destroys all blocks nearby!",
                 _ => "COMBO!"
             };
-            SpawnFloatingText(name, 34, new Color(1f, 0.8f, 0.2f), new Vector2(0.5f, 0.55f), 3.5f);
+            SpawnFloatingText(name, 34, new Color(1f, 0.8f, 0.2f), new Vector2(0.5f, 0.40f), 3.5f);
         }
 
         private void OnAnchorUsed(AnchorUsedEvent evt)
         {
             SpawnFloatingText($"ANCHOR ({evt.ChargesRemaining} left)", 30,
-                new Color(0.3f, 0.8f, 1f), new Vector2(0.5f, 0.85f), 1f);
+                new Color(0.3f, 0.8f, 1f), new Vector2(0.5f, 0.50f), 1f);
         }
 
         private void SpawnFloatingText(string text, int fontSize, Color color, Vector2 anchor, float duration)

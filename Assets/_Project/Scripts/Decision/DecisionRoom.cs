@@ -45,7 +45,23 @@ namespace RuneDrop.Decision
         {
             var player = PlayerController.Instance;
             if (player != null)
-                player.SetFallSpeedMultiplier(0.3f); // Slow but not stopped
+                player.SetFallSpeedMultiplier(0.3f);
+
+            // Clear nearby obstacles so the decision area is clean
+            var hits = Physics2D.OverlapCircleAll(transform.position, 8f);
+            foreach (var hit in hits)
+            {
+                if (hit.gameObject.layer == 7) // Obstacle
+                    Destroy(hit.gameObject);
+            }
+
+            // Clear floating feedback text by finding FeedbackCanvas children
+            var feedbackCanvas = GameObject.Find("FeedbackCanvas");
+            if (feedbackCanvas != null)
+            {
+                for (int i = feedbackCanvas.transform.childCount - 1; i >= 0; i--)
+                    Destroy(feedbackCanvas.transform.GetChild(i).gameObject);
+            }
 
             CreateBannerUI();
             Debug.Log("[Decision] Choose!");
