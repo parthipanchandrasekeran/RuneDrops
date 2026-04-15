@@ -81,6 +81,10 @@ namespace RuneDrop.UI
             var feedbackGO = new GameObject("RuneCollectFeedback");
             feedbackGO.AddComponent<RuneCollectFeedback>();
 
+            // ── Audio ────────────────────────────────────────────────
+            var audioGO = new GameObject("ProceduralAudio");
+            audioGO.AddComponent<RuneDrop.Core.ProceduralAudio>();
+
             // ── Polish ──────────────────────────────────────────────
             var juiceGO = new GameObject("GameJuice");
             juiceGO.AddComponent<GameJuice>();

@@ -186,21 +186,41 @@ namespace RuneDrop.Core
         }
 
         // ── Tap Detection ───────────────────────────────────────────
+        // Returns screen-space tap position. Use tapPos / Screen.width for normalized.
+        // Safe area is accounted for by remapping tap into safe area coordinates.
 
         public static bool GetTap(out Vector2 pos)
         {
             pos = Vector2.zero;
             if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
             {
-                pos = RuneDrop.Core.ScreenSetup.FixTouchPos(Input.GetTouch(0).position);
+                pos = RemapToSafeArea(Input.GetTouch(0).position);
                 return true;
             }
             if (Input.GetMouseButtonDown(0))
             {
-                pos = RuneDrop.Core.ScreenSetup.FixTouchPos(Input.mousePosition);
+                pos = RemapToSafeArea(Input.mousePosition);
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Remaps a raw screen position so that 0,0 = bottom-left of safe area
+        /// and Screen.width,Screen.height = top-right of safe area.
+        /// This makes tap zones match UI element positions inside the safe area root.
+        /// </summary>
+        private static Vector2 RemapToSafeArea(Vector2 rawScreenPos)
+        {
+            Rect safe = Screen.safeArea;
+            // If safe area is the whole screen, no remapping needed
+            if (safe.width >= Screen.width - 1 && safe.height >= Screen.height - 1)
+                return rawScreenPos;
+
+            // Remap: subtract safe area origin, scale to fill 0..Screen size
+            float x = (rawScreenPos.x - safe.xMin) / safe.width * Screen.width;
+            float y = (rawScreenPos.y - safe.yMin) / safe.height * Screen.height;
+            return new Vector2(x, y);
         }
 
         public static bool TapInRect(Vector2 tapPos, float xMin, float yMin, float xMax, float yMax)
