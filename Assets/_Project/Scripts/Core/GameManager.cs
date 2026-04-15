@@ -64,13 +64,7 @@ namespace RuneDrop.Core
             }
         }
 
-        private void OnApplicationPause(bool paused)
-        {
-            if (paused && ServiceLocator.TryGet<SaveSystem>(out var save))
-            {
-                save.Save();
-            }
-        }
+        // SaveSystem handles its own OnApplicationPause save
 
         private void OnDestroy()
         {
@@ -100,14 +94,21 @@ namespace RuneDrop.Core
         public void StartRun()
         {
             ResetRunData();
-            StartCoroutine(LoadSceneAndTransition(SCENE_GAMEPLAY, GameState.Playing));
-            EventBus.Publish(new RunStartedEvent());
 
             if (ServiceLocator.TryGet<SaveSystem>(out var save))
             {
                 save.Data.TotalRuns++;
                 save.Save();
             }
+
+            StartCoroutine(StartRunCoroutine());
+        }
+
+        private IEnumerator StartRunCoroutine()
+        {
+            yield return LoadSceneAndTransition(SCENE_GAMEPLAY, GameState.Playing);
+            // Publish AFTER scene is loaded so subscribers exist
+            EventBus.Publish(new RunStartedEvent());
         }
 
         public void EndRun()

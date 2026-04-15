@@ -182,13 +182,13 @@ namespace RuneDrop.UI
         private void RefreshEngagementMeta()
         {
             var today = System.DateTime.UtcNow.Date;
-            string todayStr = today.ToString("yyyy-MM-dd");
+            string todayStr = today.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
             string lastStr = PlayerPrefs.GetString("LastActiveDate", "");
             int streak = PlayerPrefs.GetInt("LoginStreak", 0);
 
             if (lastStr != todayStr)
             {
-                if (System.DateTime.TryParse(lastStr, out var lastDate) && (today - lastDate.Date).TotalDays == 1)
+                if (System.DateTime.TryParseExact(lastStr, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var lastDate) && (today - lastDate.Date).TotalDays == 1)
                     streak = Mathf.Clamp(streak + 1, 1, 365);
                 else
                     streak = 1;

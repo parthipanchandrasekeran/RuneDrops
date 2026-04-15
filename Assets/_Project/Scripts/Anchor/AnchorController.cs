@@ -42,12 +42,18 @@ namespace RuneDrop.Anchor
             ServiceLocator.Register(this);
         }
 
+        private bool _inputWired;
+
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
             Initialize();
+            TryWireInput();
+        }
 
-            // Wire tap input from TouchInputHandler on Player
+        private void TryWireInput()
+        {
+            if (_inputWired) return;
             var player = PlayerController.Instance;
             if (player != null)
             {
@@ -55,6 +61,7 @@ namespace RuneDrop.Anchor
                 if (input != null)
                 {
                     input.OnTap += TryAnchor;
+                    _inputWired = true;
                 }
             }
         }
@@ -81,6 +88,9 @@ namespace RuneDrop.Anchor
 
         private void Update()
         {
+            // Retry input wiring if not done yet
+            if (!_inputWired) TryWireInput();
+
             // Cooldown
             if (_cooldownTimer > 0f)
             {

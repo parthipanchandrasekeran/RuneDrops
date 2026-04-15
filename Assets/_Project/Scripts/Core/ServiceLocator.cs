@@ -24,13 +24,15 @@ namespace RuneDrop.Core
             _services[type] = service;
         }
 
-        public static void Unregister<T>() where T : class
+        public static void Unregister<T>(T instance = null) where T : class
         {
             var type = typeof(T);
-            if (_services.ContainsKey(type))
-            {
-                _services.Remove(type);
-            }
+            if (!_services.ContainsKey(type)) return;
+
+            // Only remove if the registered instance matches (prevents race on scene reload)
+            if (instance != null && _services[type] != (object)instance) return;
+
+            _services.Remove(type);
         }
 
         // ── Resolve ─────────────────────────────────────────────────

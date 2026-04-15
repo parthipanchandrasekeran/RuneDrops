@@ -27,7 +27,7 @@ namespace RuneDrop.Decision
             var col = gameObject.AddComponent<BoxCollider2D>();
             col.isTrigger = true;
             col.size = new Vector2(12f, 3f);
-            gameObject.layer = 9;
+            // Stay on default layer 0 so trigger works with player (also layer 0)
         }
 
         private void OnTriggerEnter2D(Collider2D other)

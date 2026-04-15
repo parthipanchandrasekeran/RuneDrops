@@ -105,7 +105,7 @@ namespace RuneDrop.UI
 
             EventBus.Publish(new TutorialCompletedEvent());
             Destroy(_panel);
-            Destroy(this);
+            Destroy(gameObject);
         }
 
         private void CreateUI()

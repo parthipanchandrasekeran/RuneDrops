@@ -9,6 +9,7 @@ namespace RuneDrop.Player
     /// state management, and death/revive logic.
     /// </summary>
     [RequireComponent(typeof(TouchInputHandler))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class PlayerController : MonoBehaviour
     {
         // ── Singleton ───────────────────────────────────────────────
@@ -35,6 +36,7 @@ namespace RuneDrop.Player
         private bool _isAlive;
         private bool _isInvincible;
         private float _invincibilityTimer;
+        private int _lastDepthMilestone = -1;
 
         // Horizontal bounds
         private float _leftBound = -4f;
@@ -61,6 +63,10 @@ namespace RuneDrop.Player
 
             ServiceLocator.Register(this);
             _input = GetComponent<TouchInputHandler>();
+
+            // Ensure Rigidbody2D is kinematic (required for trigger collisions)
+            var rb = GetComponent<Rigidbody2D>();
+            if (rb != null) { rb.bodyType = RigidbodyType2D.Kinematic; rb.gravityScale = 0f; }
         }
 
         private void Start()
@@ -151,9 +157,11 @@ namespace RuneDrop.Player
             transform.Translate(0f, -fallDelta, 0f);
             _depthTraveled += fallDelta;
 
-            // Publish score update periodically
-            if (Mathf.FloorToInt(_depthTraveled) % 10 == 0)
+            // Publish score update once per 10m milestone
+            int milestone = Mathf.FloorToInt(_depthTraveled / 10f);
+            if (milestone > _lastDepthMilestone)
             {
+                _lastDepthMilestone = milestone;
                 EventBus.Publish(new ScoreChangedEvent
                 {
                     NewDepth = _depthTraveled,
