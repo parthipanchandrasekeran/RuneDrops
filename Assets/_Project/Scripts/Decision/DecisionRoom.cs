@@ -44,6 +44,8 @@ namespace RuneDrop.Decision
             if (player != null)
                 player.SetFallSpeedMultiplier(0.3f);
 
+            GameManager.Instance?.EnterDecisionRoom();
+
             var hits = Physics2D.OverlapCircleAll(transform.position, 8f);
             foreach (var hit in hits)
             {
@@ -85,6 +87,8 @@ namespace RuneDrop.Decision
 
             var player = PlayerController.Instance;
             if (player != null) player.ResetFallSpeedMultiplier();
+
+            GameManager.Instance?.ExitDecisionRoom();
 
             if (_canvasGO != null) Destroy(_canvasGO);
             UIHelper.LightHaptic();

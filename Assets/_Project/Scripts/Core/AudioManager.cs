@@ -62,7 +62,7 @@ namespace RuneDrop.Core
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<AudioManager>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

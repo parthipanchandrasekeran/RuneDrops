@@ -49,7 +49,7 @@ namespace RuneDrop.Decision
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<DecisionRoomManager>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }
@@ -132,7 +132,7 @@ namespace RuneDrop.Decision
                         if (player != null)
                         {
                             player.SetFallSpeedMultiplier(0.6f);
-                            Instance.StartCoroutine(ResetSpeedAfter(10f));
+                            Instance?.StartCoroutine(ResetSpeedAfter(10f));
                         }
                         Debug.Log("[Decision] Slow fall applied for 10s");
                     }
@@ -192,7 +192,7 @@ namespace RuneDrop.Decision
                         if (player != null)
                         {
                             player.SetFallSpeedMultiplier(2f);
-                            Instance.StartCoroutine(SpeedRushTimer(5f, 50));
+                            Instance?.StartCoroutine(SpeedRushTimer(5f, 50));
                         }
                         Debug.Log("[Decision] Speed Rush! Good luck...");
                     }

@@ -43,7 +43,7 @@ namespace RuneDrop.Runes
             EventBus.Unsubscribe<ComboActivatedEvent>(OnComboActivated);
             if (Instance == this)
             {
-                ServiceLocator.Unregister<RunePowerManager>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

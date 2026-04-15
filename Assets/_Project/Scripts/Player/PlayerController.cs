@@ -83,7 +83,7 @@ namespace RuneDrop.Player
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<PlayerController>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

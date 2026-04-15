@@ -40,7 +40,7 @@ namespace RuneDrop.Runes
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<RuneInventory>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

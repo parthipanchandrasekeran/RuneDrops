@@ -70,7 +70,7 @@ namespace RuneDrop.Anchor
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<AnchorController>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
 

@@ -12,7 +12,7 @@ namespace RuneDrop.Player
     {
         // ── Configuration ───────────────────────────────────────────
         [SerializeField] private float _tapTimeThreshold = 0.2f;
-        [SerializeField] private float _tapDistanceThreshold = 0.5f;
+        [SerializeField] private float _tapDistanceThreshold = 0.15f;
 
         // ── Events ──────────────────────────────────────────────────
         public Action<float> OnDragPosition;

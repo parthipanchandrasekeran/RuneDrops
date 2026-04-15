@@ -38,7 +38,7 @@ namespace RuneDrop.Core
 
         private void OnDestroy()
         {
-            ServiceLocator.Unregister<SaveSystem>();
+            ServiceLocator.Unregister(this);
         }
 
         // ── Save / Load ─────────────────────────────────────────────

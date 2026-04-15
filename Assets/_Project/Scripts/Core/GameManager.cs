@@ -70,7 +70,7 @@ namespace RuneDrop.Core
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<GameManager>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

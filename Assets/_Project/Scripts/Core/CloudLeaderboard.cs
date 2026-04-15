@@ -34,7 +34,7 @@ namespace RuneDrop.Core
 
         private void OnDestroy()
         {
-            if (Instance == this) { ServiceLocator.Unregister<CloudLeaderboard>(); Instance = null; }
+            if (Instance == this) { ServiceLocator.Unregister(this); Instance = null; }
         }
 
         // ── Submit Score ────────────────────────────────────────────
@@ -52,7 +52,9 @@ namespace RuneDrop.Core
             int year = now.Year;
 
             string safeName = playerName?.Replace("\"", "").Replace("\\", "") ?? "Anonymous";
-            string json = $"{{\"player_name\":\"{safeName}\",\"depth\":{depth:F1},\"runes_collected\":{runes},\"combos_activated\":{combos},\"run_duration\":{duration:F1},\"device_id\":\"{SystemInfo.deviceUniqueIdentifier}\",\"week_number\":{week},\"year\":{year}}}";
+            string depthStr = depth.ToString("F1", CultureInfo.InvariantCulture);
+            string durStr = duration.ToString("F1", CultureInfo.InvariantCulture);
+            string json = $"{{\"player_name\":\"{safeName}\",\"depth\":{depthStr},\"runes_collected\":{runes},\"combos_activated\":{combos},\"run_duration\":{durStr},\"device_id\":\"{SystemInfo.deviceUniqueIdentifier}\",\"week_number\":{week},\"year\":{year}}}";
 
             var url = $"{SupabaseConfig.ProjectUrl}/rest/v1/{SupabaseConfig.ScoresTable}";
             Debug.Log($"[Cloud] Submitting score to: {url}");

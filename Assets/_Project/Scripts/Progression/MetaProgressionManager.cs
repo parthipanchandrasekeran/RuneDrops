@@ -88,7 +88,7 @@ namespace RuneDrop.Progression
             EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
             if (Instance == this)
             {
-                ServiceLocator.Unregister<MetaProgressionManager>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

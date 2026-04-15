@@ -40,7 +40,7 @@ namespace RuneDrop.Level
 
         private void OnDestroy()
         {
-            if (Instance == this) { ServiceLocator.Unregister<LevelGenerator>(); Instance = null; }
+            if (Instance == this) { ServiceLocator.Unregister(this); Instance = null; }
         }
 
         private void Update()

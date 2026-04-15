@@ -50,7 +50,7 @@ namespace RuneDrop.Core
         {
             if (Instance == this)
             {
-                ServiceLocator.Unregister<ObjectPooler>();
+                ServiceLocator.Unregister(this);
                 Instance = null;
             }
         }

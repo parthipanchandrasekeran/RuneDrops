@@ -83,9 +83,7 @@ namespace RuneDrop.UI
             var backGO = new GameObject("BackButtonHandler");
             backGO.AddComponent<BackButtonHandler>();
 
-            // Screen flipper for inverted devices
-            var flipGO = new GameObject("ScreenFlipper");
-            flipGO.AddComponent<ScreenFlipper>();
+            // ScreenFlipper removed — orientation handled by OS
         }
     }
 }
