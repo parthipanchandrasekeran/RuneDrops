@@ -9,7 +9,8 @@
         "RuneDrop.Anchor",
         "RuneDrop.Decision",
         "RuneDrop.Progression",
-        "RuneDrop.Utils"
+        "RuneDrop.Utils",
+        "RuneDrop.Monetization"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

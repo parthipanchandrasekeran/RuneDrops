@@ -1,6 +1,7 @@
 using UnityEngine;
 using RuneDrop.Core;
 using RuneDrop.Progression;
+using RuneDrop.Monetization;
 
 namespace RuneDrop.UI
 {
@@ -75,18 +76,65 @@ namespace RuneDrop.UI
             float nx = tapPos.x / Screen.width;
             float ny = tapPos.y / Screen.height;
 
-            if (nx > 0.05f && nx < 0.48f && ny > 0.05f && ny < 0.22f)
+            // REVIVE (AD) button — left, row 2
+            if (nx > 0.05f && nx < 0.48f && ny > 0.21f && ny < 0.31f)
             {
                 UIHelper.LightHaptic();
-                _panel.SetActive(false);
-                if (GameManager.Instance != null)
-                    GameManager.Instance.StartRun();
-                else
-                    UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
+                var ad = AdManager.Instance;
+                if (ad != null && ad.CanRevive)
+                {
+                    ad.ShowRewardedForRevive(() =>
+                    {
+                        _panel.SetActive(false);
+                        GameManager.Instance?.RevivePlayer();
+                    });
+                }
                 return;
             }
 
-            if (nx > 0.52f && nx < 0.95f && ny > 0.05f && ny < 0.22f)
+            // 2x SHARDS (AD) button — right, row 2
+            if (nx > 0.52f && nx < 0.95f && ny > 0.21f && ny < 0.31f)
+            {
+                UIHelper.LightHaptic();
+                var ad = AdManager.Instance;
+                if (ad != null && ad.IsRewardedReady)
+                {
+                    ad.ShowRewardedForDoubleShards(() =>
+                    {
+                        if (ServiceLocator.TryGet<SaveSystem>(out var save))
+                        {
+                            var meta = MetaProgressionManager.Instance;
+                            int bonus = meta?.LastRunSummary?.SoulShardsEarned ?? 10;
+                            save.Data.SoulShards += bonus;
+                            save.Save();
+                            _shardsText.text = $"+{bonus * 2} Soul Shards (doubled!)";
+                        }
+                    });
+                }
+                return;
+            }
+
+            // RETRY button — left, bottom row
+            if (nx > 0.05f && nx < 0.48f && ny > 0.05f && ny < 0.19f)
+            {
+                UIHelper.LightHaptic();
+                _panel.SetActive(false);
+                AdManager.Instance?.OnPlayerDied();
+                AdManager.Instance?.TryShowInterstitialOnDeath(() =>
+                {
+                    if (GameManager.Instance != null)
+                        GameManager.Instance.StartRun();
+                    else
+                        UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
+                });
+                // If no interstitial shown, start run directly
+                if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.Dead)
+                    GameManager.Instance.StartRun();
+                return;
+            }
+
+            // UPGRADES button — right, bottom row
+            if (nx > 0.52f && nx < 0.95f && ny > 0.05f && ny < 0.19f)
             {
                 UIHelper.LightHaptic();
                 _panel.SetActive(false);
@@ -113,10 +161,17 @@ namespace RuneDrop.UI
             _bestText = UIHelper.MakeText(ct, "Best", new Vector2(0.5f, 0.39f), "Best: 0m", 28, UIHelper.TextDim, TextAnchor.MiddleCenter, 900, 50);
             _goalText = UIHelper.MakeText(ct, "Goal", new Vector2(0.5f, 0.34f), "0m to next milestone", 24, UIHelper.AccentCyan, TextAnchor.MiddleCenter, 900, 50);
 
-            UIHelper.MakeButton(ct, "Retry", new Vector2(0.05f, 0.08f), new Vector2(0.48f, 0.2f),
-                "RETRY", 42, new Color(0.08f, 0.28f, 0.2f, 0.96f), UIHelper.AccentGreen);
-            UIHelper.MakeButton(ct, "Upgrades", new Vector2(0.52f, 0.08f), new Vector2(0.95f, 0.2f),
-                "UPGRADES", 36, new Color(0.16f, 0.1f, 0.26f, 0.96f), UIHelper.AccentPurple);
+            // Ad buttons (middle row)
+            UIHelper.MakeButton(ct, "Revive", new Vector2(0.05f, 0.22f), new Vector2(0.48f, 0.30f),
+                "REVIVE (AD)", 28, new Color(0.2f, 0.15f, 0.05f, 0.96f), UIHelper.AccentGold);
+            UIHelper.MakeButton(ct, "DoubleShards", new Vector2(0.52f, 0.22f), new Vector2(0.95f, 0.30f),
+                "2x SHARDS (AD)", 24, new Color(0.2f, 0.15f, 0.05f, 0.96f), UIHelper.AccentGold);
+
+            // Bottom row
+            UIHelper.MakeButton(ct, "Retry", new Vector2(0.05f, 0.08f), new Vector2(0.48f, 0.18f),
+                "RETRY", 40, new Color(0.08f, 0.28f, 0.2f, 0.96f), UIHelper.AccentGreen);
+            UIHelper.MakeButton(ct, "Upgrades", new Vector2(0.52f, 0.08f), new Vector2(0.95f, 0.18f),
+                "UPGRADES", 34, new Color(0.16f, 0.1f, 0.26f, 0.96f), UIHelper.AccentPurple);
             UIFXAnimator.Attach(_panel, 0.2f, 0.985f);
         }
     }

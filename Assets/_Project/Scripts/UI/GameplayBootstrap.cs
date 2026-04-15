@@ -4,6 +4,7 @@ using RuneDrop.Runes;
 using RuneDrop.Anchor;
 using RuneDrop.Decision;
 using RuneDrop.Utils;
+using RuneDrop.Monetization;
 
 namespace RuneDrop.UI
 {
@@ -67,6 +68,14 @@ namespace RuneDrop.UI
 
             var tutorialGO = new GameObject("TutorialTrigger");
             tutorialGO.AddComponent<TutorialTrigger>();
+
+            // ── Ads ─────────────────────────────────────────────────
+            if (AdManager.Instance == null)
+            {
+                var adGO = new GameObject("AdManager");
+                adGO.AddComponent<AdManager>();
+            }
+            AdManager.Instance?.OnRunStarted();
 
             // ── Feedback ─────────────────────────────────────────────
             var feedbackGO = new GameObject("RuneCollectFeedback");
