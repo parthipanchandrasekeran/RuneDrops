@@ -35,6 +35,7 @@ namespace RuneDrop.Runes
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
+            if (_config == null) Debug.LogError("[RunePowerManager] GameConfig missing!");
             EventBus.Subscribe<ComboActivatedEvent>(OnComboActivated);
         }
 

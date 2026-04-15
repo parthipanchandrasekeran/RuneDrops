@@ -80,12 +80,22 @@ namespace RuneDrop.Progression
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
+            if (_config == null) Debug.LogError("[MetaProgressionManager] GameConfig missing!");
+        }
+
+        private void OnEnable()
+        {
+            // Subscribe in OnEnable so it re-subscribes after EventBus.Clear on scene reload
             EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+        }
+
+        private void OnDisable()
+        {
+            EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
         }
 
         private void OnDestroy()
         {
-            EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
             if (Instance == this)
             {
                 ServiceLocator.Unregister(this);

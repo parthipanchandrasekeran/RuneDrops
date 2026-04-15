@@ -42,7 +42,10 @@ namespace RuneDrop.Decision
         {
             var player = PlayerController.Instance;
             if (player != null)
+            {
                 player.SetFallSpeedMultiplier(0.3f);
+                player.SetInvincible(30f); // Invincible during decision (cleared on choice)
+            }
 
             GameManager.Instance?.EnterDecisionRoom();
 

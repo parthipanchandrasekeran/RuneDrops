@@ -47,6 +47,7 @@ namespace RuneDrop.Anchor
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
+            if (_config == null) { Debug.LogError("[AnchorController] GameConfig missing!"); return; }
             Initialize();
             TryWireInput();
         }

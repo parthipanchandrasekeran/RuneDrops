@@ -37,7 +37,7 @@ namespace RuneDrop.UI
             // Check if player has set a name
             string playerName = PlayerPrefs.GetString("PlayerName", "");
 
-            if (string.IsNullOrEmpty(playerName))
+            if (string.IsNullOrWhiteSpace(playerName))
             {
                 // First launch — show name input
                 var nameGO = new GameObject("NameInput");

@@ -41,6 +41,7 @@ namespace RuneDrop.Decision
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
+            if (_config == null) { Debug.LogError("[DecisionRoomManager] GameConfig missing!"); return; }
             _timeSinceLastRoom = 0f;
             _roomsSpawned = 0;
         }

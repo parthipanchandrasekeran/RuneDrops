@@ -16,6 +16,7 @@ namespace RuneDrop.Core
         // ── State ───────────────────────────────────────────────────
         public GameState CurrentState { get; private set; } = GameState.Boot;
         public bool IsInitialized { get; private set; }
+        private bool _isTransitioning;
 
         // ── Run Data ────────────────────────────────────────────────
         public float CurrentRunDepth { get; set; }
@@ -93,6 +94,8 @@ namespace RuneDrop.Core
 
         public void StartRun()
         {
+            if (_isTransitioning) return;
+            _isTransitioning = true;
             ResetRunData();
 
             if (ServiceLocator.TryGet<SaveSystem>(out var save))
@@ -107,7 +110,7 @@ namespace RuneDrop.Core
         private IEnumerator StartRunCoroutine()
         {
             yield return LoadSceneAndTransition(SCENE_GAMEPLAY, GameState.Playing);
-            // Publish AFTER scene is loaded so subscribers exist
+            _isTransitioning = false;
             EventBus.Publish(new RunStartedEvent());
         }
 
@@ -183,8 +186,16 @@ namespace RuneDrop.Core
 
         public void ReturnToMainMenu()
         {
+            if (_isTransitioning) return;
+            _isTransitioning = true;
             Time.timeScale = 1f;
-            StartCoroutine(LoadSceneAndTransition(SCENE_MAIN_MENU, GameState.MainMenu));
+            StartCoroutine(ReturnToMenuCoroutine());
+        }
+
+        private IEnumerator ReturnToMenuCoroutine()
+        {
+            yield return LoadSceneAndTransition(SCENE_MAIN_MENU, GameState.MainMenu);
+            _isTransitioning = false;
         }
 
         // ── Helpers ─────────────────────────────────────────────────

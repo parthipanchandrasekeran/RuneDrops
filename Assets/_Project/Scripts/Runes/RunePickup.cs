@@ -78,6 +78,9 @@ namespace RuneDrop.Runes
         {
             if (_collected) return;
             if (!other.CompareTag("Player")) return;
+            // Don't collect runes during decision rooms
+            var gm = RuneDrop.Core.GameManager.Instance;
+            if (gm != null && gm.CurrentState == RuneDrop.Core.GameState.DecisionRoom) return;
             _collected = true;
             RuneInventory.Instance?.CollectRune(_runeType);
             Destroy(gameObject);
