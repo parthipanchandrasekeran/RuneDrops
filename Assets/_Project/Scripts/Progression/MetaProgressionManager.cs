@@ -159,7 +159,21 @@ namespace RuneDrop.Progression
         public int CalculateRunReward(float depth, int runesCollected)
         {
             float shards = _config.SoulShardsPerRun;
-            shards += (depth / 100f) * _config.SoulShardDepthBonus * 100f;
+
+            // Diminishing returns on revived runs: post-revive depth counts at 50%
+            var gm = GameManager.Instance;
+            if (gm != null && gm.WasRevivedThisRun && gm.ReviveDepth > 0f)
+            {
+                float preRevive = gm.ReviveDepth;
+                float postRevive = Mathf.Max(0, depth - gm.ReviveDepth);
+                float effectiveDepth = preRevive + postRevive * 0.5f;
+                shards += (effectiveDepth / 100f) * _config.SoulShardDepthBonus * 100f;
+            }
+            else
+            {
+                shards += (depth / 100f) * _config.SoulShardDepthBonus * 100f;
+            }
+
             shards += runesCollected * _config.SoulShardPerRune;
             return Mathf.RoundToInt(shards);
         }

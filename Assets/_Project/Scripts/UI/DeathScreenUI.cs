@@ -15,6 +15,7 @@ namespace RuneDrop.UI
         private UnityEngine.UI.Text _depthText;
         private UnityEngine.UI.Text _runesText;
         private UnityEngine.UI.Text _shardsText;
+        private bool _hasDoubledThisDeath;
         private UnityEngine.UI.Text _bestText;
         private UnityEngine.UI.Text _goalText;
 
@@ -63,6 +64,7 @@ namespace RuneDrop.UI
                 _titleText.color = UIHelper.AccentRed;
             }
 
+            _hasDoubledThisDeath = false;
             _panel.SetActive(true);
         }
 
@@ -97,7 +99,7 @@ namespace RuneDrop.UI
             {
                 UIHelper.LightHaptic();
                 var ad = AdManager.Instance;
-                if (ad != null && ad.IsRewardedReady)
+                if (ad != null && ad.CanDoubleShards && !_hasDoubledThisDeath)
                 {
                     ad.ShowRewardedForDoubleShards(() =>
                     {
@@ -108,6 +110,7 @@ namespace RuneDrop.UI
                             save.Data.SoulShards += bonus;
                             save.Save();
                             _shardsText.text = $"+{bonus * 2} Soul Shards (doubled!)";
+                            _hasDoubledThisDeath = true;
                         }
                     });
                 }

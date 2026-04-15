@@ -38,12 +38,16 @@ namespace RuneDrop.Decision
             ServiceLocator.Register(this);
         }
 
+        private static int _speedRushShardsThisRun;
+        private const int MAX_SPEED_RUSH_SHARDS_PER_RUN = 100;
+
         private void Start()
         {
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
             if (_config == null) { Debug.LogError("[DecisionRoomManager] GameConfig missing!"); return; }
             _timeSinceLastRoom = 0f;
             _roomsSpawned = 0;
+            _speedRushShardsThisRun = 0;
         }
 
         private void OnDestroy()
@@ -255,12 +259,14 @@ namespace RuneDrop.Decision
             if (player != null && player.IsAlive)
             {
                 player.ResetFallSpeedMultiplier();
-                // Survived! Award shards
-                if (ServiceLocator.TryGet<SaveSystem>(out var save))
+                // Survived! Award shards (capped per run)
+                int actualReward = Mathf.Min(shardReward, MAX_SPEED_RUSH_SHARDS_PER_RUN - _speedRushShardsThisRun);
+                if (actualReward > 0 && ServiceLocator.TryGet<SaveSystem>(out var save))
                 {
-                    save.Data.SoulShards += shardReward;
+                    _speedRushShardsThisRun += actualReward;
+                    save.Data.SoulShards += actualReward;
                     save.Save();
-                    Debug.Log($"[Decision] Speed Rush survived! +{shardReward} shards");
+                    Debug.Log($"[Decision] Speed Rush survived! +{actualReward} shards ({_speedRushShardsThisRun}/{MAX_SPEED_RUSH_SHARDS_PER_RUN} cap)");
                 }
             }
             else

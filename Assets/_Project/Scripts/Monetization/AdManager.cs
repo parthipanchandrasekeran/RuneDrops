@@ -36,6 +36,11 @@ namespace RuneDrop.Monetization
         [SerializeField] private int _maxRevivesPerRun = 1;
         [SerializeField] private int _interstitialEveryNDeaths = 3;
 
+        // ── Anti-Exploit Caps ───────────────────────────────────────
+        [Header("Anti-Exploit Caps")]
+        [SerializeField] private int _maxRewardedAdsPerDay = 10;
+        [SerializeField] private int _maxDoubleShardsPerSession = 3;
+
         // ── State ───────────────────────────────────────────────────
         private bool _adsRemoved;
         private bool _isRewardedLoaded;
@@ -44,6 +49,9 @@ namespace RuneDrop.Monetization
         private float _lastRewardedTime = -999f;
         private int _revivesThisRun;
         private int _deathsSinceLastInterstitial;
+        private int _rewardedAdsToday;
+        private int _doubleShardsThisSession;
+        private int _rewardedAdsThisSession;
 
         private Action _onRewardedComplete;
         private Action _onRewardedFailed;
@@ -55,8 +63,17 @@ namespace RuneDrop.Monetization
 
         // ── Properties ──────────────────────────────────────────────
         public bool AdsRemoved => _adsRemoved;
-        public bool IsRewardedReady => _isRewardedLoaded && Time.time - _lastRewardedTime >= _rewardedCooldown;
+        public bool IsRewardedReady => _isRewardedLoaded
+            && Time.time - _lastRewardedTime >= GetEscalatingCooldown()
+            && _rewardedAdsToday < _maxRewardedAdsPerDay;
         public bool CanRevive => _revivesThisRun < _maxRevivesPerRun && IsRewardedReady;
+        public bool CanDoubleShards => _doubleShardsThisSession < _maxDoubleShardsPerSession && IsRewardedReady;
+
+        /// <summary>Cooldown escalates: 30s, 45s, 67s, 101s... per session</summary>
+        private float GetEscalatingCooldown()
+        {
+            return _rewardedCooldown * Mathf.Pow(1.5f, Mathf.Min(_rewardedAdsThisSession, 5));
+        }
 
         // ── Lifecycle ───────────────────────────────────────────────
 
@@ -71,6 +88,22 @@ namespace RuneDrop.Monetization
         {
             if (ServiceLocator.TryGet<SaveSystem>(out var save))
                 _adsRemoved = save.Data.AdsRemoved;
+
+            // Load daily ad counter
+            string today = System.DateTime.UtcNow.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+            string lastAdDate = PlayerPrefs.GetString("LastAdDate", "");
+            if (lastAdDate != today)
+            {
+                _rewardedAdsToday = 0;
+                PlayerPrefs.SetString("LastAdDate", today);
+                PlayerPrefs.SetInt("RewardedAdsToday", 0);
+                PlayerPrefs.Save();
+            }
+            else
+            {
+                _rewardedAdsToday = PlayerPrefs.GetInt("RewardedAdsToday", 0);
+            }
+
             InitializeAds();
         }
 
@@ -135,7 +168,8 @@ namespace RuneDrop.Monetization
 
         public void ShowRewardedForDoubleShards(Action onDoubled, Action onFailed = null)
         {
-            ShowRewarded(onDoubled, onFailed);
+            if (!CanDoubleShards) { onFailed?.Invoke(); return; }
+            ShowRewarded(() => { _doubleShardsThisSession++; onDoubled?.Invoke(); }, onFailed);
         }
 
         // ── Interstitial: On Death ──────────────────────────────────
@@ -199,6 +233,10 @@ namespace RuneDrop.Monetization
         {
             _lastRewardedTime = Time.time;
             _isRewardedLoaded = false;
+            _rewardedAdsToday++;
+            _rewardedAdsThisSession++;
+            PlayerPrefs.SetInt("RewardedAdsToday", _rewardedAdsToday);
+            PlayerPrefs.Save();
             _onRewardedComplete?.Invoke();
             _onRewardedComplete = null;
             _onRewardedFailed = null;

@@ -24,6 +24,8 @@ namespace RuneDrop.Core
         public float CurrentRunDuration { get; set; }
         public int CurrentRunCombos { get; set; }
         public int CurrentRunDecisionRooms { get; set; }
+        public bool WasRevivedThisRun { get; set; }
+        public float ReviveDepth { get; set; }
 
         // ── Scene Names ─────────────────────────────────────────────
         private const string SCENE_BOOT = "Boot";
@@ -138,8 +140,9 @@ namespace RuneDrop.Core
 
         public void RevivePlayer()
         {
+            WasRevivedThisRun = true;
+            ReviveDepth = CurrentRunDepth;
             TransitionTo(GameState.Reviving);
-            // Brief delay then resume
             StartCoroutine(ReviveSequence());
         }
 
@@ -207,6 +210,8 @@ namespace RuneDrop.Core
             CurrentRunDuration = 0f;
             CurrentRunCombos = 0;
             CurrentRunDecisionRooms = 0;
+            WasRevivedThisRun = false;
+            ReviveDepth = 0f;
         }
 
         private IEnumerator LoadSceneAndTransition(string sceneName, GameState targetState)

@@ -129,6 +129,15 @@ namespace RuneDrop.Level
         {
             float difficulty = GetDifficulty();
 
+            // Scale difficulty UP based on player upgrades (prevents maxed players from infinite runs)
+            if (ServiceLocator.TryGet<SaveSystem>(out var save))
+            {
+                int totalUpgrades = save.Data.UpgradeAnchorCharges + save.Data.UpgradeSlowFall
+                    + save.Data.UpgradeRuneSpawn + save.Data.UpgradeStartShield + save.Data.UpgradeComboExtend;
+                difficulty += totalUpgrades * 0.02f; // +2% difficulty per upgrade level
+                difficulty = Mathf.Clamp01(difficulty);
+            }
+
             var bounds = WorldBounds.Instance;
             float leftX = bounds != null ? bounds.LeftBound + 1.5f : -3f;
             float rightX = bounds != null ? bounds.RightBound - 1.5f : 3f;
