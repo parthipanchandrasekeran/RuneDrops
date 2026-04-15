@@ -37,3 +37,8 @@ Thumbs.db
 
 # Crashlytics
 crashlytics-build.properties
+
+# Build artifacts
+.utmp/
+*_BurstDebugInformation_DoNotShip/
+.vsconfig

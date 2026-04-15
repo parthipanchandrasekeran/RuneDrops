@@ -1,8 +1,0 @@
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/CMakeFiles/edit_cache.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/GameActivity/CMakeFiles/game.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/GameActivity/CMakeFiles/edit_cache.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/GameActivity/CMakeFiles/rebuild_cache.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/FramePacing/CMakeFiles/swappywrapper.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/FramePacing/CMakeFiles/edit_cache.dir
-D:/AndroidStudioProjects/RuneDrops/.utmp/RelWithDebInfo/5l92xp6b/armeabi-v7a/FramePacing/CMakeFiles/rebuild_cache.dir
