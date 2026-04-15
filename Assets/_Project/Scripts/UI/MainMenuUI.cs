@@ -28,6 +28,7 @@ namespace RuneDrop.UI
         private SettingsScreenUI _settings;
         private LeaderboardScreenUI _leaderboard;
         private PowersReferenceUI _powers;
+        private ModeSelectUI _modeSelect;
 
         private void Start()
         {
@@ -80,11 +81,22 @@ namespace RuneDrop.UI
             float nx = tapPos.x / Screen.width;
             float ny = tapPos.y / Screen.height;
 
+            // PLAY button opens mode select
             if (ny > 0.30f && ny < 0.53f)
             {
                 UIHelper.LightHaptic();
-                if (GameManager.Instance != null) GameManager.Instance.StartRun();
-                else UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
+                if (_modeSelect == null) _modeSelect = FindFirstObjectByType<ModeSelectUI>();
+                if (_modeSelect != null)
+                {
+                    _canvas.gameObject.SetActive(false);
+                    _modeSelect.Open(() => _canvas.gameObject.SetActive(true));
+                }
+                else
+                {
+                    // Fallback: start classic mode directly
+                    if (GameManager.Instance != null) GameManager.Instance.StartRun();
+                    else UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
+                }
                 return;
             }
 

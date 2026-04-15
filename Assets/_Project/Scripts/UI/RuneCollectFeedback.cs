@@ -43,28 +43,17 @@ namespace RuneDrop.UI
                 _ => Color.white
             };
 
-            // Clear plain-language description of what each rune does
+            // Short name only — descriptions are in the Powers reference screen
             string desc = type switch
             {
-                RuneType.Fire => "+FIRE\nKills red blocks near you for 5 sec",
-                RuneType.Wind => "+WIND\nYou fall slower for 5 sec",
-                RuneType.Shadow => "+SHADOW\nYou pass through red blocks for 5 sec",
-                RuneType.Earth => "+EARTH\nYou survive the next hit",
-                _ => "+Rune"
+                RuneType.Fire => "+FIRE!",
+                RuneType.Wind => "+WIND!",
+                RuneType.Shadow => "+SHADOW!",
+                RuneType.Earth => "+EARTH!",
+                _ => "+RUNE!"
             };
 
-            // Show combo hint
-            var inv = RuneInventory.Instance;
-            if (inv != null && inv.SlotA != RuneType.None && inv.SlotB != RuneType.None)
-            {
-                var combo = ComboDetector.Detect(inv.SlotA, inv.SlotB);
-                if (combo == ComboType.None)
-                {
-                    desc += "\n\nNeed matching pair for combo!";
-                }
-            }
-
-            SpawnFloatingText(desc, 30, color, new Vector2(0.5f, 0.45f), 2.5f);
+            SpawnFloatingText(desc, 38, color, new Vector2(0.5f, 0.45f), 1.5f);
         }
 
         private void OnComboActivated(ComboActivatedEvent evt)

@@ -41,25 +41,25 @@ namespace RuneDrop.Core
         private void OnRuneCollected(RuneCollectedEvent evt)
         {
             // Crystal chime — two harmonics with quick decay
-            PlaySound(CreateChime(700f, 0.12f), 0.2f);
+            PlaySound(CreateChime(700f, 0.15f), 0.45f);
         }
 
         private void OnComboActivated(ComboActivatedEvent evt)
         {
             // Power surge — rising tone with sub bass
-            PlaySound(CreatePowerUp(200f, 600f, 0.35f), 0.35f);
+            PlaySound(CreatePowerUp(200f, 600f, 0.4f), 0.55f);
         }
 
         private void OnAnchorUsed(AnchorUsedEvent evt)
         {
             // Heavy impact — low thud with decay
-            PlaySound(CreateImpact(80f, 0.2f), 0.3f);
+            PlaySound(CreateImpact(80f, 0.25f), 0.5f);
         }
 
         private void OnDied(PlayerDiedEvent evt)
         {
             // Death rumble — descending low tone
-            PlaySound(CreateDeath(180f, 60f, 0.5f), 0.4f);
+            PlaySound(CreateDeath(180f, 60f, 0.6f), 0.6f);
         }
 
         private void OnDecisionRoom(DecisionRoomAppearedEvent evt)

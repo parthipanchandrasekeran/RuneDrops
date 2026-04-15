@@ -26,6 +26,7 @@ namespace RuneDrop.Core
         public int CurrentRunDecisionRooms { get; set; }
         public bool WasRevivedThisRun { get; set; }
         public float ReviveDepth { get; set; }
+        public GameMode CurrentMode { get; private set; } = GameMode.Classic;
 
         // ── Scene Names ─────────────────────────────────────────────
         private const string SCENE_BOOT = "Boot";
@@ -94,10 +95,13 @@ namespace RuneDrop.Core
 
         // ── Run Lifecycle ───────────────────────────────────────────
 
-        public void StartRun()
+        public void StartRun() => StartRunWithMode(GameMode.Classic);
+
+        public void StartRunWithMode(GameMode mode)
         {
             if (_isTransitioning) return;
             _isTransitioning = true;
+            CurrentMode = mode;
             ResetRunData();
 
             if (ServiceLocator.TryGet<SaveSystem>(out var save))

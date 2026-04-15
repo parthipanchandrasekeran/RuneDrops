@@ -73,6 +73,10 @@ namespace RuneDrop.UI
             var powersGO = new GameObject("PowersReferenceUI");
             powersGO.AddComponent<PowersReferenceUI>();
 
+            // Mode select
+            var modeGO = new GameObject("ModeSelectUI");
+            modeGO.AddComponent<ModeSelectUI>();
+
             // Back button handler
             var backGO = new GameObject("BackButtonHandler");
             backGO.AddComponent<BackButtonHandler>();

@@ -55,7 +55,13 @@ namespace RuneDrop.UI
             UIHelper.MakePanel(ct, "TopBarEdge", new Vector2(0f, 0.91f), new Vector2(1f, 0.914f), new Color(0.45f, 0.85f, 1f, 0.35f));
 
             _depthText = UIHelper.MakeGlowText(ct, "Depth", new Vector2(0.5f, 0.964f), "0", 54, UIHelper.TextWhite);
-            _depthLabel = UIHelper.MakeText(ct, "DepthLabel", new Vector2(0.5f, 0.936f), "DEPTH", 18, UIHelper.TextDim);
+            // Show mode name if not Classic
+            var gm = GameManager.Instance;
+            string modeLabel = (gm != null && gm.CurrentMode != GameMode.Classic)
+                ? GameModeConfig.GetName(gm.CurrentMode) : "DEPTH";
+            Color modeColor = (gm != null && gm.CurrentMode != GameMode.Classic)
+                ? GameModeConfig.GetColor(gm.CurrentMode) : UIHelper.TextDim;
+            _depthLabel = UIHelper.MakeText(ct, "DepthLabel", new Vector2(0.5f, 0.936f), modeLabel, 18, modeColor);
 
             UIHelper.MakeText(ct, "SlotLabel", new Vector2(0.16f, 0.936f), "RUNES", 16, UIHelper.TextMuted, TextAnchor.MiddleCenter, 140, 30);
             _runeSlotAImg = CreateRuneSlot(ct, "SlotA", new Vector2(0.1f, 0.963f));

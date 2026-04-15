@@ -88,6 +88,7 @@ namespace RuneDrop.UI
             // ── Audio ────────────────────────────────────────────────
             var audioGO = new GameObject("ProceduralAudio");
             audioGO.AddComponent<RuneDrop.Core.ProceduralAudio>();
+            audioGO.AddComponent<RuneDrop.Core.ProceduralMusic>();
 
             // ── Polish ──────────────────────────────────────────────
             var juiceGO = new GameObject("GameJuice");

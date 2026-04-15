@@ -206,12 +206,13 @@ namespace RuneDrop.Decision
                 {
                     Id = "double_runes",
                     Name = "Rune Frenzy",
-                    Description = "More runes + more obstacles",
+                    Description = "3x runes but 2x obstacles for 15s",
                     IsSafe = false,
                     Color = new Color(0.9f, 0f, 0.9f),
                     Apply = () =>
                     {
-                        Debug.Log("[Decision] Rune Frenzy activated");
+                        Instance?.StartCoroutine(RuneFrenzyTimer(15f));
+                        Debug.Log("[Decision] Rune Frenzy activated!");
                     }
                 }
             };
@@ -237,6 +238,18 @@ namespace RuneDrop.Decision
             }
 
             Debug.Log($"[Decision] Player chose: {choice.Name} ({(choice.IsSafe ? "Safe" : "Risky")})");
+        }
+
+        // ── Rune Frenzy State (read by LevelGenerator) ──────────────
+        public static bool IsRuneFrenzyActive { get; private set; }
+
+        private static System.Collections.IEnumerator RuneFrenzyTimer(float seconds)
+        {
+            IsRuneFrenzyActive = true;
+            Debug.Log($"[Decision] Rune Frenzy ON for {seconds}s");
+            yield return new WaitForSeconds(seconds);
+            IsRuneFrenzyActive = false;
+            Debug.Log("[Decision] Rune Frenzy OFF");
         }
 
         // ── Timer Coroutines ────────────────────────────────────────

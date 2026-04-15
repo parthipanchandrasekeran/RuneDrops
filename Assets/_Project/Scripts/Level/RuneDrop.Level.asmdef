@@ -1,7 +1,7 @@
 {
     "name": "RuneDrop.Level",
     "rootNamespace": "RuneDrop.Level",
-    "references": ["RuneDrop.Core", "RuneDrop.Data", "RuneDrop.Player", "RuneDrop.Runes", "RuneDrop.Obstacles"],
+    "references": ["RuneDrop.Core", "RuneDrop.Data", "RuneDrop.Player", "RuneDrop.Runes", "RuneDrop.Obstacles", "RuneDrop.Decision"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

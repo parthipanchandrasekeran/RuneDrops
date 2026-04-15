@@ -50,6 +50,7 @@ namespace RuneDrop.Level
             UpdateGridLines(camY);
             UpdateSideRuins(camY);
             UpdateDepthMarker(camY);
+            UpdateEnvironmentColor();
         }
 
         // ── Grid Lines ──────────────────────────────────────────────
@@ -178,6 +179,51 @@ namespace RuneDrop.Level
                     _depthMarker.color = c;
                 }
             }
+        }
+
+        // ── Environment Color Shift ─────────────────────────────────
+
+        private void UpdateEnvironmentColor()
+        {
+            var player = PlayerController.Instance;
+            if (player == null || _camera == null) return;
+
+            float depth = player.DepthTraveled;
+
+            // Shift background color based on depth zone (every 100m)
+            // Zone 0 (0-100m): dark purple
+            // Zone 1 (100-200m): dark blue
+            // Zone 2 (200-300m): dark teal
+            // Zone 3 (300-400m): dark crimson
+            // Zone 4 (400m+): deep black-red
+            int zone = Mathf.FloorToInt(depth / 100f);
+            float zoneProgress = (depth % 100f) / 100f;
+
+            Color fromColor = GetZoneColor(zone);
+            Color toColor = GetZoneColor(zone + 1);
+            Color bgColor = Color.Lerp(fromColor, toColor, zoneProgress);
+
+            _camera.backgroundColor = bgColor;
+
+            // Shift grid line color to match zone
+            Color gridColor = new Color(bgColor.r + 0.1f, bgColor.g + 0.08f, bgColor.b + 0.15f, 0.2f);
+            foreach (var line in _gridLines)
+            {
+                if (line != null) line.color = gridColor;
+            }
+        }
+
+        private Color GetZoneColor(int zone)
+        {
+            return (zone % 5) switch
+            {
+                0 => new Color(0.05f, 0.02f, 0.10f), // Dark purple
+                1 => new Color(0.02f, 0.05f, 0.12f), // Dark blue
+                2 => new Color(0.02f, 0.08f, 0.08f), // Dark teal
+                3 => new Color(0.10f, 0.03f, 0.05f), // Dark crimson
+                4 => new Color(0.08f, 0.02f, 0.02f), // Deep black-red
+                _ => new Color(0.05f, 0.02f, 0.10f)
+            };
         }
     }
 }

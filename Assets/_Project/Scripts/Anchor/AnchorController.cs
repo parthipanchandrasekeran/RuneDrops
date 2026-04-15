@@ -113,6 +113,16 @@ namespace RuneDrop.Anchor
 
         public void Initialize()
         {
+            // Game mode can override anchor charges (NoAnchor = 0)
+            int modeOverride = GameModeConfig.GetAnchorOverride(GameManager.Instance?.CurrentMode ?? GameMode.Classic);
+            if (modeOverride >= 0)
+            {
+                _maxCharges = modeOverride;
+                _currentCharges = _maxCharges;
+                Debug.Log($"[Anchor] Mode override: {_maxCharges} charges");
+                return;
+            }
+
             int upgradeBonus = 0;
             if (ServiceLocator.TryGet<SaveSystem>(out var save))
             {

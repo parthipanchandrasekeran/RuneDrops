@@ -134,6 +134,13 @@ namespace RuneDrop.Player
             {
                 float reduction = save.Data.UpgradeSlowFall * _config.SlowFallReductionPerLevel;
                 _currentFallSpeed *= (1f - reduction);
+
+                // Apply Start Shield upgrade
+                if (save.Data.UpgradeStartShield > 0)
+                {
+                    TransitionToState(PlayerState.Shielded);
+                    Debug.Log("[PlayerController] Start Shield active!");
+                }
             }
 
             // Wire input

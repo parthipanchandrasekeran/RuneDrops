@@ -35,7 +35,11 @@ namespace RuneDrop.Level
         {
             if (_config == null)
                 _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
-            Initialize(Random.Range(0, int.MaxValue));
+            // Daily Challenge uses fixed seed so everyone plays the same level
+            int seed = (GameManager.Instance?.CurrentMode == GameMode.DailyChallenge)
+                ? GameModeConfig.GetDailySeed()
+                : Random.Range(0, int.MaxValue);
+            Initialize(seed);
         }
 
         private void OnDestroy()
@@ -129,12 +133,13 @@ namespace RuneDrop.Level
         {
             float difficulty = GetDifficulty();
 
-            // Scale difficulty UP based on player upgrades (prevents maxed players from infinite runs)
-            if (ServiceLocator.TryGet<SaveSystem>(out var save))
+            // Scale difficulty UP based on player upgrades
+            ServiceLocator.TryGet<SaveSystem>(out var save);
+            if (save != null)
             {
                 int totalUpgrades = save.Data.UpgradeAnchorCharges + save.Data.UpgradeSlowFall
                     + save.Data.UpgradeRuneSpawn + save.Data.UpgradeStartShield + save.Data.UpgradeComboExtend;
-                difficulty += totalUpgrades * 0.02f; // +2% difficulty per upgrade level
+                difficulty += totalUpgrades * 0.02f;
                 difficulty = Mathf.Clamp01(difficulty);
             }
 
@@ -145,8 +150,14 @@ namespace RuneDrop.Level
             float chunkTop = chunk.YPosition;
             float chunkBottom = chunk.YPosition - _config.ChunkHeight;
 
-            // ── Obstacles: 2-4 per chunk, well-spaced ───────────────
-            int obstacleCount = 2 + Mathf.FloorToInt(difficulty * 2f); // 2-4
+            // ── Obstacles: 2-4 per chunk (doubled during Rune Frenzy) ──
+            int obstacleCount = 2 + Mathf.FloorToInt(difficulty * 2f);
+            if (RuneDrop.Decision.DecisionRoomManager.IsRuneFrenzyActive)
+                obstacleCount *= 2;
+            // Game mode obstacle multiplier
+            var gm = GameManager.Instance;
+            if (gm != null)
+                obstacleCount = Mathf.RoundToInt(obstacleCount * GameModeConfig.GetObstacleMultiplier(gm.CurrentMode));
             float spacing = _config.ChunkHeight / (obstacleCount + 1);
 
             for (int i = 0; i < obstacleCount; i++)
@@ -159,8 +170,17 @@ namespace RuneDrop.Level
                     new Vector3(xPos, yPos, 0f), difficulty, _rng);
             }
 
-            // ── Runes: 1-2 per chunk, placed in gaps between obstacles ──
-            int runeCount = 1 + (_rng.Next(100) < 40 ? 1 : 0); // 60% chance of 1, 40% chance of 2
+            // ── Runes: 1-2 per chunk, boosted by Rune Spawn upgrade ────
+            float runeBonus = 1f;
+            if (save != null)
+                runeBonus += save.Data.UpgradeRuneSpawn * _config.RuneSpawnBonusPerLevel;
+            int baseRunes = 1 + (_rng.Next(100) < 40 ? 1 : 0);
+            if (RuneDrop.Decision.DecisionRoomManager.IsRuneFrenzyActive)
+                baseRunes *= 3;
+            // Game mode rune multiplier
+            if (gm != null)
+                baseRunes = Mathf.RoundToInt(baseRunes * GameModeConfig.GetRuneMultiplier(gm.CurrentMode));
+            int runeCount = Mathf.RoundToInt(baseRunes * runeBonus);
             for (int i = 0; i < runeCount; i++)
             {
                 // Place runes between obstacle rows
