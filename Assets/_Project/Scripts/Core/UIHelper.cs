@@ -127,10 +127,7 @@ namespace RuneDrop.Core
             txt.fontSize = fontSize;
             txt.alignment = alignment;
             txt.color = color;
-            // Use Cinzel fantasy font, fallback to system font
-            txt.font = Resources.Load<Font>("Cinzel");
-            if (txt.font == null)
-                txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (txt.font == null)
                 txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
             txt.horizontalOverflow = HorizontalWrapMode.Overflow;
