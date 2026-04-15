@@ -17,7 +17,7 @@ namespace RuneDrop.UI
         private void Start()
         {
             _canvas = UIHelper.CreateCanvas(transform, "FeedbackCanvas", 120);
-            _ct = _canvas.transform;
+            _ct = UIHelper.GetSafeAreaRoot(_canvas);
 
             EventBus.Subscribe<RuneCollectedEvent>(OnRuneCollected);
             EventBus.Subscribe<ComboActivatedEvent>(OnComboActivated);
