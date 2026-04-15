@@ -81,6 +81,10 @@ namespace RuneDrop.UI
             var feedbackGO = new GameObject("RuneCollectFeedback");
             feedbackGO.AddComponent<RuneCollectFeedback>();
 
+            // ── Falling Environment (visual speed cues) ────────────
+            var envGO = new GameObject("FallingEnvironment");
+            envGO.AddComponent<RuneDrop.Level.FallingEnvironment>();
+
             // ── Audio ────────────────────────────────────────────────
             var audioGO = new GameObject("ProceduralAudio");
             audioGO.AddComponent<RuneDrop.Core.ProceduralAudio>();

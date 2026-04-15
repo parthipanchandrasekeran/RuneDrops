@@ -10,7 +10,8 @@
         "RuneDrop.Decision",
         "RuneDrop.Progression",
         "RuneDrop.Utils",
-        "RuneDrop.Monetization"
+        "RuneDrop.Monetization",
+        "RuneDrop.Level"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
