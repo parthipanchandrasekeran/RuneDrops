@@ -5,8 +5,7 @@ using RuneDrop.Core;
 namespace RuneDrop.UI
 {
     /// <summary>
-    /// Main menu with animated title, weekly banner, stats cards, and clear navigation.
-    /// Dark fantasy theme with purple/gold accents.
+    /// High-contrast main menu with cleaner hierarchy and dramatic visual rhythm.
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
@@ -16,11 +15,12 @@ namespace RuneDrop.UI
         private Text _titleText;
         private Text _playText;
         private Text _playerNameText;
+        private Text _streakText;
+        private Text _dailyGoalText;
         private Text _weeklyLeaderText;
         private Text _weeklyCountdownText;
         private Text _weeklyPrizeText;
         private RectTransform _playBGRect;
-        private Image _playBGImage;
         private Image _playGlowImage;
         private float _timer;
         private bool _bannerRefreshed;
@@ -31,6 +31,7 @@ namespace RuneDrop.UI
         private void Start()
         {
             CreateUI();
+            RefreshEngagementMeta();
             _settings = FindFirstObjectByType<SettingsScreenUI>();
             _leaderboard = FindFirstObjectByType<LeaderboardScreenUI>();
         }
@@ -41,7 +42,6 @@ namespace RuneDrop.UI
 
             _timer += Time.deltaTime;
 
-            // ── Update stats ────────────────────────────────────────
             if (ServiceLocator.TryGet<SaveSystem>(out var save))
             {
                 _bestDepthText.text = $"{save.Data.BestDepth:F0}m";
@@ -49,62 +49,55 @@ namespace RuneDrop.UI
             }
 
             string pName = PlayerPrefs.GetString("PlayerName", "");
-            if (_playerNameText != null && !string.IsNullOrEmpty(pName))
-                _playerNameText.text = pName;
+            if (_playerNameText != null)
+                _playerNameText.text = string.IsNullOrWhiteSpace(pName) ? "Adventurer" : pName;
 
-            // ── Animations ──────────────────────────────────────────
-            // Title shimmer
-            float hue = 0.75f + Mathf.Sin(_timer * 0.5f) * 0.05f;
-            _titleText.color = Color.HSVToRGB(hue, 0.45f, 1f);
+            float hue = 0.55f + Mathf.Sin(_timer * 0.3f) * 0.06f;
+            _titleText.color = Color.HSVToRGB(hue, 0.55f, 1f);
 
-            // Play button pulse
-            float s = 1f + Mathf.Sin(_timer * 2.5f) * 0.03f;
+            float s = 1f + Mathf.Sin(_timer * 2.2f) * 0.022f;
             if (_playBGRect != null) _playBGRect.localScale = new Vector3(s, s, 1f);
 
-            // Play glow breathe
             if (_playGlowImage != null)
             {
                 var c = _playGlowImage.color;
-                c.a = 0.15f + Mathf.Sin(_timer * 1.5f) * 0.1f;
+                c.a = 0.2f + Mathf.Sin(_timer * 1.9f) * 0.08f;
                 _playGlowImage.color = c;
             }
 
-            // Play text color
-            float t = (Mathf.Sin(_timer * 3f) + 1f) / 2f;
-            _playText.color = Color.Lerp(new Color(0.8f, 1f, 0.8f), Color.white, t);
+            float t = (Mathf.Sin(_timer * 2.8f) + 1f) / 2f;
+            _playText.color = Color.Lerp(UIHelper.AccentGreen, UIHelper.TextWhite, t);
 
-            // ── Refresh weekly banner ───────────────────────────────
             if (!_bannerRefreshed && CloudLeaderboard.Instance != null && CloudLeaderboard.Instance.IsLoaded)
             {
                 RefreshWeeklyBanner();
                 _bannerRefreshed = true;
             }
 
-            // ── Handle taps ─────────────────────────────────────────
             Vector2 tapPos;
             if (!UIHelper.GetTap(out tapPos)) return;
             float nx = tapPos.x / Screen.width;
             float ny = tapPos.y / Screen.height;
 
-            // PLAY button (0.33-0.50)
-            if (ny > 0.30f && ny < 0.52f)
+            if (ny > 0.30f && ny < 0.53f)
             {
+                UIHelper.LightHaptic();
                 if (GameManager.Instance != null) GameManager.Instance.StartRun();
                 else UnityEngine.SceneManagement.SceneManager.LoadScene("Gameplay");
                 return;
             }
 
-            // Settings (bottom-left)
-            if (nx < 0.45f && ny < 0.13f && _settings != null)
+            if (nx < 0.47f && ny < 0.12f && _settings != null)
             {
+                UIHelper.LightHaptic();
                 _canvas.gameObject.SetActive(false);
                 _settings.Open(() => _canvas.gameObject.SetActive(true));
                 return;
             }
 
-            // Leaderboard (bottom-right)
-            if (nx > 0.55f && ny < 0.13f && _leaderboard != null)
+            if (nx > 0.53f && ny < 0.12f && _leaderboard != null)
             {
+                UIHelper.LightHaptic();
                 _canvas.gameObject.SetActive(false);
                 _leaderboard.Open(() => _canvas.gameObject.SetActive(true));
                 return;
@@ -121,12 +114,12 @@ namespace RuneDrop.UI
                 var top = lb.TopThisWeek[0];
                 string[] parts = top.Date.Split('|');
                 string name = parts.Length > 1 ? parts[0] : "???";
-                _weeklyLeaderText.text = $"Current #1: {name} — {top.Depth:F0}m";
+                _weeklyLeaderText.text = $"Current #1: {name} · {top.Depth:F0}m";
                 _weeklyLeaderText.color = UIHelper.AccentGold;
             }
             else
             {
-                _weeklyLeaderText.text = "No scores yet — be the first!";
+                _weeklyLeaderText.text = "No scores yet — claim the first crown.";
                 _weeklyLeaderText.color = UIHelper.AccentGreen;
             }
 
@@ -136,145 +129,82 @@ namespace RuneDrop.UI
             _weeklyCountdownText.text = $"Resets in {days} day{(days != 1 ? "s" : "")}";
 
             if (lb.CurrentWinner != null)
-                _weeklyPrizeText.text = $"Last week: {lb.CurrentWinner.PlayerName} won $10 CAD!";
+                _weeklyPrizeText.text = $"Last week winner: {lb.CurrentWinner.PlayerName} ($10 CAD)";
         }
-
-        // ── Create UI ───────────────────────────────────────────────
 
         private void CreateUI()
         {
             _canvas = UIHelper.CreateCanvas(transform, "MenuCanvas", 100);
-            var ct = _canvas.transform;
+            var ct = UIHelper.GetSafeAreaRoot(_canvas);
 
-            // ══════════════════════════════════════════════════════════
-            // BACKGROUND LAYERS (creates depth)
-            // ══════════════════════════════════════════════════════════
-            UIHelper.MakePanel(ct, "BG", Vector2.zero, Vector2.one,
-                new Color(0.01f, 0.005f, 0.03f));
+            UIHelper.MakePanel(ct, "BG", Vector2.zero, Vector2.one, UIHelper.BgDark);
+            UIHelper.MakePanel(ct, "AuraTop", new Vector2(0f, 0.64f), new Vector2(1f, 1f), new Color(0.1f, 0.22f, 0.42f, 0.36f));
+            UIHelper.MakePanel(ct, "AuraBottom", new Vector2(0f, 0f), new Vector2(1f, 0.28f), new Color(0.22f, 0.1f, 0.28f, 0.26f));
 
-            // Top purple glow
-            UIHelper.MakePanel(ct, "TopGlow",
-                new Vector2(0f, 0.7f), new Vector2(1f, 1f),
-                new Color(0.12f, 0.04f, 0.2f, 0.5f));
+            UIHelper.MakeCard(ct, "Banner", new Vector2(0.03f, 0.86f), new Vector2(0.97f, 0.985f), new Color(0.09f, 0.12f, 0.2f, 0.95f), new Color(0.4f, 0.62f, 0.95f, 0.35f));
+            _weeklyPrizeText = UIHelper.MakeGlowText(ct, "PrizeLabel", new Vector2(0.5f, 0.96f), "WEEKLY PRIZE · $10 CAD", 24, UIHelper.AccentGold);
+            _weeklyLeaderText = UIHelper.MakeText(ct, "WeeklyLeader", new Vector2(0.5f, 0.925f), "Loading leaderboard...", 22, UIHelper.TextDim);
+            _weeklyCountdownText = UIHelper.MakeText(ct, "Countdown", new Vector2(0.5f, 0.89f), "", 20, UIHelper.TextMuted);
 
-            // Bottom subtle glow
-            UIHelper.MakePanel(ct, "BotGlow",
-                new Vector2(0f, 0f), new Vector2(1f, 0.25f),
-                new Color(0.03f, 0.02f, 0.08f, 0.8f));
+            _titleText = UIHelper.MakeGlowText(ct, "Title", new Vector2(0.5f, 0.76f), "RUNE DROP", 90, UIHelper.AccentCyan);
+            UIHelper.MakeText(ct, "Sub", new Vector2(0.5f, 0.70f), "Arcane descent · Precision dodging · Rune mastery", 24, UIHelper.TextDim);
+            UIHelper.MakeDivider(ct, "TitleDiv", 0.675f);
 
-            // ══════════════════════════════════════════════════════════
-            // WEEKLY PRIZE BANNER (top)
-            // ══════════════════════════════════════════════════════════
-            UIHelper.MakePanel(ct, "BannerBG",
-                new Vector2(0f, 0.87f), new Vector2(1f, 1f),
-                new Color(0.12f, 0.08f, 0.02f, 0.95f));
-            // Gold line
-            UIHelper.MakePanel(ct, "BannerLine",
-                new Vector2(0f, 0.868f), new Vector2(1f, 0.872f),
-                new Color(0.8f, 0.6f, 0.15f, 0.6f));
+            UIHelper.MakeCard(ct, "DepthCard", new Vector2(0.06f, 0.56f), new Vector2(0.47f, 0.66f), new Color(0.07f, 0.1f, 0.18f, 0.95f), new Color(0.35f, 0.7f, 0.95f, 0.3f));
+            UIHelper.MakeText(ct, "DepthLbl", new Vector2(0.265f, 0.637f), "BEST DEPTH", 20, UIHelper.TextMuted);
+            _bestDepthText = UIHelper.MakeGlowText(ct, "DepthVal", new Vector2(0.265f, 0.597f), "0m", 46, UIHelper.AccentCyan);
 
-            _weeklyPrizeText = UIHelper.MakeText(ct, "PrizeLabel", new Vector2(0.5f, 0.96f),
-                "WEEKLY PRIZE: $10 CAD", 26, UIHelper.AccentGold);
-            _weeklyLeaderText = UIHelper.MakeText(ct, "WeeklyLeader", new Vector2(0.5f, 0.925f),
-                "Loading leaderboard...", 24, UIHelper.TextDim);
-            _weeklyCountdownText = UIHelper.MakeText(ct, "Countdown", new Vector2(0.5f, 0.89f),
-                "", 20, UIHelper.TextMuted);
+            UIHelper.MakeCard(ct, "ShardCard", new Vector2(0.53f, 0.56f), new Vector2(0.94f, 0.66f), new Color(0.12f, 0.08f, 0.18f, 0.95f), new Color(0.62f, 0.38f, 0.95f, 0.3f));
+            UIHelper.MakeText(ct, "ShardLbl", new Vector2(0.735f, 0.637f), "SOUL SHARDS", 20, UIHelper.TextMuted);
+            _shardsText = UIHelper.MakeGlowText(ct, "ShardVal", new Vector2(0.735f, 0.597f), "0", 46, UIHelper.AccentPurple);
 
-            // ══════════════════════════════════════════════════════════
-            // TITLE
-            // ══════════════════════════════════════════════════════════
-            _titleText = UIHelper.MakeText(ct, "Title", new Vector2(0.5f, 0.78f),
-                "RUNE DROP", 84, UIHelper.AccentPurple);
-
-            UIHelper.MakeText(ct, "Sub", new Vector2(0.5f, 0.71f),
-                "Descend  .  Collect  .  Survive", 24, UIHelper.TextDim);
-
-            // Accent line under title
-            UIHelper.MakePanel(ct, "TitleLine",
-                new Vector2(0.2f, 0.685f), new Vector2(0.8f, 0.688f),
-                new Color(0.5f, 0.25f, 0.7f, 0.5f));
-
-            // ══════════════════════════════════════════════════════════
-            // STATS CARDS
-            // ══════════════════════════════════════════════════════════
-            // Best depth card
-            UIHelper.MakePanel(ct, "DepthCardBorder",
-                new Vector2(0.06f, 0.565f), new Vector2(0.47f, 0.67f),
-                new Color(0.2f, 0.4f, 0.5f, 0.2f));
-            UIHelper.MakePanel(ct, "DepthCard",
-                new Vector2(0.065f, 0.57f), new Vector2(0.465f, 0.665f),
-                new Color(0.04f, 0.06f, 0.1f, 0.9f));
-            UIHelper.MakeText(ct, "DepthLbl", new Vector2(0.265f, 0.645f),
-                "BEST DEPTH", 20, UIHelper.TextMuted);
-            _bestDepthText = UIHelper.MakeText(ct, "DepthVal", new Vector2(0.265f, 0.6f),
-                "0m", 44, UIHelper.AccentCyan);
-
-            // Soul shards card
-            UIHelper.MakePanel(ct, "ShardCardBorder",
-                new Vector2(0.53f, 0.565f), new Vector2(0.94f, 0.67f),
-                new Color(0.4f, 0.2f, 0.5f, 0.2f));
-            UIHelper.MakePanel(ct, "ShardCard",
-                new Vector2(0.535f, 0.57f), new Vector2(0.935f, 0.665f),
-                new Color(0.06f, 0.03f, 0.1f, 0.9f));
-            UIHelper.MakeText(ct, "ShardLbl", new Vector2(0.735f, 0.645f),
-                "SOUL SHARDS", 20, UIHelper.TextMuted);
-            _shardsText = UIHelper.MakeText(ct, "ShardVal", new Vector2(0.735f, 0.6f),
-                "0", 44, UIHelper.AccentPurple);
-
-            // ══════════════════════════════════════════════════════════
-            // PLAY BUTTON (big, centered, glowing)
-            // ══════════════════════════════════════════════════════════
-            // Outer glow
-            var glowGO = UIHelper.MakePanel(ct, "PlayGlow",
-                new Vector2(0.08f, 0.34f), new Vector2(0.92f, 0.53f),
-                new Color(0.05f, 0.2f, 0.05f, 0.25f));
+            var glowGO = UIHelper.MakePanel(ct, "PlayGlow", new Vector2(0.1f, 0.33f), new Vector2(0.9f, 0.54f), new Color(0.2f, 0.8f, 0.7f, 0.22f));
             _playGlowImage = glowGO.GetComponent<Image>();
 
-            // Button background
-            var playBG = UIHelper.MakePanel(ct, "PlayBG",
-                new Vector2(0.1f, 0.36f), new Vector2(0.9f, 0.51f),
-                new Color(0.06f, 0.22f, 0.06f, 0.95f));
+            var playBG = UIHelper.MakePanel(ct, "PlayBG", new Vector2(0.12f, 0.35f), new Vector2(0.88f, 0.52f), new Color(0.08f, 0.28f, 0.28f, 0.95f));
             _playBGRect = playBG.GetComponent<RectTransform>();
-            _playBGImage = playBG.GetComponent<Image>();
+            UIHelper.MakePanel(ct, "PlayEdge", new Vector2(0.12f, 0.515f), new Vector2(0.88f, 0.52f), new Color(0.65f, 1f, 0.95f, 0.45f));
+            _playText = UIHelper.MakeGlowText(ct, "PlayText", new Vector2(0.5f, 0.435f), "BEGIN DESCENT", 54, UIHelper.TextWhite);
 
-            // Top edge highlight
-            UIHelper.MakePanel(ct, "PlayEdge",
-                new Vector2(0.1f, 0.507f), new Vector2(0.9f, 0.513f),
-                new Color(0.3f, 0.9f, 0.3f, 0.3f));
+            _playerNameText = UIHelper.MakeText(ct, "PlayerName", new Vector2(0.5f, 0.28f), "Adventurer", 28, UIHelper.AccentCyan);
+            _streakText = UIHelper.MakeText(ct, "Streak", new Vector2(0.5f, 0.255f), "", 19, UIHelper.AccentGold);
+            _dailyGoalText = UIHelper.MakeText(ct, "DailyGoal", new Vector2(0.5f, 0.232f), "", 18, UIHelper.TextDim);
+            UIHelper.MakeText(ct, "Controls", new Vector2(0.5f, 0.205f), "Drag: Move · Tap: Anchor · Chase the glow", 20, UIHelper.TextMuted);
+            UIHelper.MakeText(ct, "Rule", new Vector2(0.5f, 0.178f), "Red hazards hurt · Rune colors power combos", 20, UIHelper.TextDim);
 
-            _playText = UIHelper.MakeText(ct, "PlayText", new Vector2(0.5f, 0.435f),
-                "P L A Y", 62, Color.white);
+            UIHelper.MakeButton(ct, "Settings", new Vector2(0.05f, 0.035f), new Vector2(0.47f, 0.115f), "SETTINGS", 30, new Color(0.12f, 0.16f, 0.26f, 0.95f), UIHelper.AccentCyan);
+            UIHelper.MakeButton(ct, "Leader", new Vector2(0.53f, 0.035f), new Vector2(0.95f, 0.115f), "LEADERBOARD", 28, new Color(0.2f, 0.14f, 0.1f, 0.95f), UIHelper.AccentGold);
 
-            // ══════════════════════════════════════════════════════════
-            // PLAYER INFO + HINTS
-            // ══════════════════════════════════════════════════════════
-            _playerNameText = UIHelper.MakeText(ct, "PlayerName", new Vector2(0.5f, 0.30f),
-                "", 28, UIHelper.AccentCyan);
+            UIHelper.MakeText(ct, "Ver", new Vector2(0.5f, 0.012f), "v1.0", 16, new Color(0.35f, 0.42f, 0.52f));
+            UIFXAnimator.Attach(_canvas.gameObject, 0.22f, 0.98f);
+        }
 
-            UIHelper.MakeText(ct, "Controls", new Vector2(0.5f, 0.255f),
-                "Drag = Move   |   Tap = Anchor   |   Glow = Collect", 20, UIHelper.TextMuted);
+        private void RefreshEngagementMeta()
+        {
+            var today = System.DateTime.UtcNow.Date;
+            string todayStr = today.ToString("yyyy-MM-dd");
+            string lastStr = PlayerPrefs.GetString("LastActiveDate", "");
+            int streak = PlayerPrefs.GetInt("LoginStreak", 0);
 
-            UIHelper.MakePanel(ct, "RuleLine",
-                new Vector2(0.15f, 0.235f), new Vector2(0.85f, 0.237f),
-                UIHelper.Divider);
+            if (lastStr != todayStr)
+            {
+                if (System.DateTime.TryParse(lastStr, out var lastDate) && (today - lastDate.Date).TotalDays == 1)
+                    streak = Mathf.Clamp(streak + 1, 1, 365);
+                else
+                    streak = 1;
 
-            UIHelper.MakeText(ct, "Rule", new Vector2(0.5f, 0.215f),
-                "RED = Danger      GLOW = Collect", 22, UIHelper.TextDim);
+                PlayerPrefs.SetString("LastActiveDate", todayStr);
+                PlayerPrefs.SetInt("LoginStreak", streak);
+                PlayerPrefs.Save();
+            }
 
-            // ══════════════════════════════════════════════════════════
-            // BOTTOM BUTTONS
-            // ══════════════════════════════════════════════════════════
-            UIHelper.MakeButton(ct, "Settings",
-                new Vector2(0.05f, 0.04f), new Vector2(0.47f, 0.12f),
-                "SETTINGS", 30, new Color(0.06f, 0.04f, 0.1f, 0.9f), UIHelper.TextDim);
+            float bestDepth = 0f;
+            if (ServiceLocator.TryGet<SaveSystem>(out var save))
+                bestDepth = save.Data.BestDepth;
 
-            UIHelper.MakeButton(ct, "Leader",
-                new Vector2(0.53f, 0.04f), new Vector2(0.95f, 0.12f),
-                "LEADERBOARD", 28, new Color(0.06f, 0.04f, 0.1f, 0.9f), UIHelper.AccentGold);
-
-            // Version
-            UIHelper.MakeText(ct, "Ver", new Vector2(0.5f, 0.015f),
-                "v1.0", 16, new Color(0.2f, 0.15f, 0.25f));
+            int goal = Mathf.Max(25, Mathf.CeilToInt((bestDepth + 1f) / 25f) * 25);
+            if (_streakText != null) _streakText.text = $"Streak: {Mathf.Max(1, streak)} day{(streak == 1 ? "" : "s")}";
+            if (_dailyGoalText != null) _dailyGoalText.text = $"Today's focus: reach {goal}m depth";
         }
     }
 }

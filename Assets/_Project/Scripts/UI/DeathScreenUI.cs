@@ -1,25 +1,21 @@
 using UnityEngine;
-using UnityEngine.UI;
 using RuneDrop.Core;
 using RuneDrop.Progression;
 
 namespace RuneDrop.UI
 {
     /// <summary>
-    /// Death screen showing run stats with Retry and Upgrades buttons.
+    /// Premium run-end screen with clear summary hierarchy and next actions.
     /// </summary>
     public class DeathScreenUI : MonoBehaviour
     {
         private GameObject _panel;
-        private Text _titleText;
-        private Text _depthText;
-        private Text _runesText;
-        private Text _shardsText;
-        private Text _bestText;
-
-        // Button rects (screen-space normalized)
-        private Rect _retryRect;
-        private Rect _upgradesRect;
+        private UnityEngine.UI.Text _titleText;
+        private UnityEngine.UI.Text _depthText;
+        private UnityEngine.UI.Text _runesText;
+        private UnityEngine.UI.Text _shardsText;
+        private UnityEngine.UI.Text _bestText;
+        private UnityEngine.UI.Text _goalText;
 
         private void Start()
         {
@@ -49,17 +45,21 @@ namespace RuneDrop.UI
             _depthText.text = $"Depth: {(summary?.DepthReached ?? 0):F0}m";
             _runesText.text = $"Runes: {summary?.RunesCollected ?? 0}";
             _shardsText.text = $"+{summary?.SoulShardsEarned ?? 0} Soul Shards";
-            _bestText.text = $"Best: {save?.BestDepth ?? 0:F0}m  |  Total: {save?.SoulShards ?? 0}";
+            _bestText.text = $"Best: {save?.BestDepth ?? 0:F0}m  ·  Total Shards: {save?.SoulShards ?? 0}";
+            int currentDepth = Mathf.RoundToInt(summary?.DepthReached ?? 0);
+            int goal = Mathf.Max(25, Mathf.CeilToInt((currentDepth + 1f) / 25f) * 25);
+            int left = Mathf.Max(0, goal - currentDepth);
+            _goalText.text = left <= 0 ? $"Milestone {goal}m cleared" : $"{left}m to next milestone ({goal}m)";
 
             if (summary != null && summary.IsNewBestDepth)
             {
                 _titleText.text = "NEW BEST!";
-                _titleText.color = new Color(1f, 0.8f, 0f);
+                _titleText.color = UIHelper.AccentGold;
             }
             else
             {
-                _titleText.text = "YOU FELL";
-                _titleText.color = new Color(1f, 0.3f, 0.3f);
+                _titleText.text = "RUN ENDED";
+                _titleText.color = UIHelper.AccentRed;
             }
 
             _panel.SetActive(true);
@@ -70,14 +70,14 @@ namespace RuneDrop.UI
             if (!_panel.activeSelf) return;
 
             Vector2 tapPos;
-            if (!GetTap(out tapPos)) return;
+            if (!UIHelper.GetTap(out tapPos)) return;
 
             float nx = tapPos.x / Screen.width;
             float ny = tapPos.y / Screen.height;
 
-            // RETRY button (left side, bottom area: x 0.05-0.48, y 0.08-0.18)
             if (nx > 0.05f && nx < 0.48f && ny > 0.05f && ny < 0.22f)
             {
+                UIHelper.LightHaptic();
                 _panel.SetActive(false);
                 if (GameManager.Instance != null)
                     GameManager.Instance.StartRun();
@@ -86,9 +86,9 @@ namespace RuneDrop.UI
                 return;
             }
 
-            // UPGRADES button (right side, bottom area: x 0.52-0.95, y 0.08-0.18)
             if (nx > 0.52f && nx < 0.95f && ny > 0.05f && ny < 0.22f)
             {
+                UIHelper.LightHaptic();
                 _panel.SetActive(false);
                 var shop = FindFirstObjectByType<UpgradeShopUI>();
                 if (shop != null) shop.Open();
@@ -96,98 +96,28 @@ namespace RuneDrop.UI
             }
         }
 
-        private bool GetTap(out Vector2 pos)
-        {
-            pos = Vector2.zero;
-            if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                pos = Input.GetTouch(0).position;
-                return true;
-            }
-            if (Input.GetMouseButtonDown(0))
-            {
-                pos = Input.mousePosition;
-                return true;
-            }
-            return false;
-        }
-
         private void CreateDeathScreen()
         {
-            var canvasGO = new GameObject("DeathCanvas");
-            canvasGO.transform.SetParent(transform);
-            var canvas = canvasGO.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 200;
-            var scaler = canvasGO.AddComponent<CanvasScaler>();
-            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1080, 1920);
-            canvasGO.AddComponent<GraphicRaycaster>();
-            _panel = canvasGO;
+            var canvas = UIHelper.CreateCanvas(transform, "DeathCanvas", 200);
+            _panel = canvas.gameObject;
+            var ct = UIHelper.GetSafeAreaRoot(canvas);
 
-            // SOLID dark overlay — fully opaque to hide the game world behind
-            MakePanel(canvasGO.transform, "Overlay", Vector2.zero, Vector2.one, new Color(0.02f, 0.01f, 0.05f, 1f));
+            UIHelper.MakePanel(ct, "Overlay", Vector2.zero, Vector2.one, new Color(0.01f, 0.02f, 0.05f, 0.93f));
+            UIHelper.MakeCard(ct, "SummaryCard", new Vector2(0.06f, 0.24f), new Vector2(0.94f, 0.80f),
+                new Color(0.07f, 0.1f, 0.17f, 0.96f), new Color(0.45f, 0.72f, 0.95f, 0.32f));
 
-            // Title
-            _titleText = MakeText(canvasGO.transform, "Title", new Vector2(0.5f, 0.72f),
-                "YOU FELL", 72, Color.red);
+            _titleText = UIHelper.MakeGlowText(ct, "Title", new Vector2(0.5f, 0.73f), "RUN ENDED", 76, UIHelper.AccentRed);
+            _depthText = UIHelper.MakeText(ct, "Depth", new Vector2(0.5f, 0.61f), "Depth: 0m", 44, UIHelper.TextWhite);
+            _runesText = UIHelper.MakeText(ct, "Runes", new Vector2(0.5f, 0.54f), "Runes: 0", 42, UIHelper.TextWhite);
+            _shardsText = UIHelper.MakeGlowText(ct, "Shards", new Vector2(0.5f, 0.46f), "+0 Soul Shards", 46, UIHelper.AccentPurple);
+            _bestText = UIHelper.MakeText(ct, "Best", new Vector2(0.5f, 0.39f), "Best: 0m", 28, UIHelper.TextDim, UnityEngine.UI.TextAnchor.MiddleCenter, 900, 50);
+            _goalText = UIHelper.MakeText(ct, "Goal", new Vector2(0.5f, 0.34f), "0m to next milestone", 24, UIHelper.AccentCyan, UnityEngine.UI.TextAnchor.MiddleCenter, 900, 50);
 
-            // Stats
-            _depthText = MakeText(canvasGO.transform, "Depth", new Vector2(0.5f, 0.58f),
-                "Depth: 0m", 44, Color.white);
-            _runesText = MakeText(canvasGO.transform, "Runes", new Vector2(0.5f, 0.50f),
-                "Runes: 0", 44, Color.white);
-            _shardsText = MakeText(canvasGO.transform, "Shards", new Vector2(0.5f, 0.42f),
-                "+0 Soul Shards", 48, new Color(0.8f, 0.6f, 1f));
-            _bestText = MakeText(canvasGO.transform, "Best", new Vector2(0.5f, 0.34f),
-                "Best: 0m", 32, new Color(0.7f, 0.7f, 0.7f));
-
-            // RETRY button (left)
-            MakePanel(canvasGO.transform, "RetryBG",
-                new Vector2(0.05f, 0.08f), new Vector2(0.48f, 0.2f),
-                new Color(0.1f, 0.4f, 0.1f, 0.9f));
-            MakeText(canvasGO.transform, "RetryText", new Vector2(0.265f, 0.14f),
-                "RETRY", 42, new Color(0.3f, 1f, 0.3f));
-
-            // UPGRADES button (right)
-            MakePanel(canvasGO.transform, "UpgradesBG",
-                new Vector2(0.52f, 0.08f), new Vector2(0.95f, 0.2f),
-                new Color(0.3f, 0.15f, 0.4f, 0.9f));
-            MakeText(canvasGO.transform, "UpgradesText", new Vector2(0.735f, 0.14f),
-                "UPGRADES", 38, new Color(0.8f, 0.6f, 1f));
-        }
-
-        private GameObject MakePanel(Transform parent, string name, Vector2 anchorMin, Vector2 anchorMax, Color color)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            var rect = go.AddComponent<RectTransform>();
-            rect.anchorMin = anchorMin;
-            rect.anchorMax = anchorMax;
-            rect.sizeDelta = Vector2.zero;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-            go.AddComponent<Image>().color = color;
-            return go;
-        }
-
-        private Text MakeText(Transform parent, string name, Vector2 anchor, string text, int size, Color color)
-        {
-            var go = new GameObject(name);
-            go.transform.SetParent(parent, false);
-            var rect = go.AddComponent<RectTransform>();
-            rect.anchorMin = anchor;
-            rect.anchorMax = anchor;
-            rect.sizeDelta = new Vector2(500, 80);
-            var txt = go.AddComponent<Text>();
-            txt.text = text;
-            txt.fontSize = size;
-            txt.alignment = TextAnchor.MiddleCenter;
-            txt.color = color;
-            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (txt.font == null) txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            go.AddComponent<Outline>().effectColor = new Color(0, 0, 0, 0.8f);
-            return txt;
+            UIHelper.MakeButton(ct, "Retry", new Vector2(0.05f, 0.08f), new Vector2(0.48f, 0.2f),
+                "RETRY", 42, new Color(0.08f, 0.28f, 0.2f, 0.96f), UIHelper.AccentGreen);
+            UIHelper.MakeButton(ct, "Upgrades", new Vector2(0.52f, 0.08f), new Vector2(0.95f, 0.2f),
+                "UPGRADES", 36, new Color(0.16f, 0.1f, 0.26f, 0.96f), UIHelper.AccentPurple);
+            UIFXAnimator.Attach(_panel, 0.2f, 0.985f);
         }
     }
 }

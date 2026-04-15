@@ -123,7 +123,7 @@ namespace RuneDrop.UI
         {
             var canvas = UIHelper.CreateCanvas(transform, "NameCanvas", 600);
             _panel = canvas.gameObject;
-            var ct = canvas.transform;
+            var ct = UIHelper.GetSafeAreaRoot(canvas);
 
             // ── Background with gradient effect ─────────────────────
             UIHelper.MakePanel(ct, "BG", Vector2.zero, Vector2.one,
@@ -189,6 +189,8 @@ namespace RuneDrop.UI
                 "$10 CAD Prize Every Week!", 32, new Color(1f, 0.85f, 0.3f));
             UIHelper.MakeText(ct, "PrizeHow", new Vector2(0.5f, 0.09f),
                 "Top score wins. New round every Monday.", 22, UIHelper.TextDim);
+
+            UIFXAnimator.Attach(_panel, 0.24f, 0.98f);
         }
     }
 }

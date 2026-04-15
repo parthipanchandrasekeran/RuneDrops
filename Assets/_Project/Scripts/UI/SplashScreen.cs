@@ -56,7 +56,7 @@ namespace RuneDrop.UI
         private void CreateUI()
         {
             var canvas = UIHelper.CreateCanvas(transform, "SplashCanvas", 1000);
-            var ct = canvas.transform;
+            var ct = UIHelper.GetSafeAreaRoot(canvas);
 
             // Black background
             UIHelper.MakePanel(ct, "BG", Vector2.zero, Vector2.one,
@@ -78,6 +78,8 @@ namespace RuneDrop.UI
             // Fade overlay (on top of everything)
             var fadeGO = UIHelper.MakePanel(ct, "Fade", Vector2.zero, Vector2.one, Color.black);
             _fadeOverlay = fadeGO.GetComponent<Image>();
+
+            UIFXAnimator.Attach(canvas.gameObject, 0.3f, 0.98f);
         }
     }
 }
