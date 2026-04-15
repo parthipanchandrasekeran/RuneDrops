@@ -85,6 +85,15 @@ namespace RuneDrop.UI
             var envGO = new GameObject("FallingEnvironment");
             envGO.AddComponent<RuneDrop.Level.FallingEnvironment>();
 
+            // ── Sprite Particles ─────────────────────────────────────
+            var particlesGO = new GameObject("SpriteParticles");
+            particlesGO.AddComponent<RuneDrop.Utils.SpriteParticles>();
+
+            // ── Player Visuals (glow + trail) ───────────────────────
+            var player = RuneDrop.Player.PlayerController.Instance;
+            if (player != null && player.GetComponent<RuneDrop.Player.PlayerVisuals>() == null)
+                player.gameObject.AddComponent<RuneDrop.Player.PlayerVisuals>();
+
             // ── Audio ────────────────────────────────────────────────
             var audioGO = new GameObject("ProceduralAudio");
             audioGO.AddComponent<RuneDrop.Core.ProceduralAudio>();

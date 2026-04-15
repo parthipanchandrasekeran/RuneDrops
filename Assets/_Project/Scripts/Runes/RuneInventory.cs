@@ -122,6 +122,21 @@ namespace RuneDrop.Runes
                     GameManager.Instance.CurrentRunCombos++;
                 }
             }
+            else
+            {
+                // No combo — activate single rune power for the newest rune (slot B)
+                ActivateSingleRunePower(_slotB);
+            }
+        }
+
+        private void ActivateSingleRunePower(RuneType type)
+        {
+            EventBus.Publish(new RunePowerActivatedEvent
+            {
+                Type = (int)type,
+                Duration = 5f
+            });
+            Debug.Log($"[Runes] Single power: {type}");
         }
 
         // ── Clear ─────────────────────────────────────────��─────────

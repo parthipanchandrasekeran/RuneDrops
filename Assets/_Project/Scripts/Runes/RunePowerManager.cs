@@ -37,11 +37,13 @@ namespace RuneDrop.Runes
             _config = Resources.Load<GameConfigSO>("Configs/GameConfig");
             if (_config == null) Debug.LogError("[RunePowerManager] GameConfig missing!");
             EventBus.Subscribe<ComboActivatedEvent>(OnComboActivated);
+            EventBus.Subscribe<RunePowerActivatedEvent>(OnSinglePowerActivated);
         }
 
         private void OnDestroy()
         {
             EventBus.Unsubscribe<ComboActivatedEvent>(OnComboActivated);
+            EventBus.Unsubscribe<RunePowerActivatedEvent>(OnSinglePowerActivated);
             if (Instance == this)
             {
                 ServiceLocator.Unregister(this);
@@ -55,6 +57,93 @@ namespace RuneDrop.Runes
         {
             var combo = (ComboType)evt.Combo;
             ActivateCombo(combo);
+        }
+
+        private void OnSinglePowerActivated(RunePowerActivatedEvent evt)
+        {
+            var type = (RuneType)evt.Type;
+            ActivateSinglePower(type, evt.Duration);
+        }
+
+        // ── Single Rune Powers ──────────────────────────────────────
+
+        private Coroutine _activeSingleCoroutine;
+
+        public void ActivateSinglePower(RuneType type, float duration)
+        {
+            if (_activeSingleCoroutine != null)
+                StopCoroutine(_activeSingleCoroutine);
+
+            _activeSingleCoroutine = type switch
+            {
+                RuneType.Fire => StartCoroutine(FirePower(duration)),
+                RuneType.Wind => StartCoroutine(WindPower(duration)),
+                RuneType.Shadow => StartCoroutine(ShadowPower(duration)),
+                RuneType.Earth => StartCoroutine(EarthPower()),
+                _ => null
+            };
+        }
+
+        private IEnumerator FirePower(float duration)
+        {
+            var player = PlayerController.Instance;
+            if (player == null) yield break;
+
+            Debug.Log($"[RunePower] FIRE active for {duration}s — destroying nearby obstacles");
+            float elapsed = 0f;
+            while (elapsed < duration && player.IsAlive)
+            {
+                elapsed += Time.deltaTime;
+                var hits = Physics2D.OverlapCircleAll(player.transform.position, 1.5f);
+                foreach (var hit in hits)
+                {
+                    if (hit.gameObject.layer == 7)
+                        Destroy(hit.gameObject);
+                }
+                yield return null;
+            }
+            EventBus.Publish(new RunePowerExpiredEvent { Type = (int)RuneType.Fire });
+            _activeSingleCoroutine = null;
+        }
+
+        private IEnumerator WindPower(float duration)
+        {
+            var player = PlayerController.Instance;
+            if (player == null) yield break;
+
+            Debug.Log($"[RunePower] WIND active for {duration}s — slowing fall");
+            player.SetFallSpeedMultiplier(0.5f);
+            yield return new WaitForSeconds(duration);
+            player.ResetFallSpeedMultiplier();
+            EventBus.Publish(new RunePowerExpiredEvent { Type = (int)RuneType.Wind });
+            _activeSingleCoroutine = null;
+        }
+
+        private IEnumerator ShadowPower(float duration)
+        {
+            var player = PlayerController.Instance;
+            if (player == null) yield break;
+
+            Debug.Log($"[RunePower] SHADOW active for {duration}s — phasing");
+            player.TransitionToState(PlayerState.Phasing);
+            yield return new WaitForSeconds(duration);
+            if (player.CurrentState == PlayerState.Phasing)
+                player.TransitionToState(PlayerState.Falling);
+            EventBus.Publish(new RunePowerExpiredEvent { Type = (int)RuneType.Shadow });
+            _activeSingleCoroutine = null;
+        }
+
+        private IEnumerator EarthPower()
+        {
+            var player = PlayerController.Instance;
+            if (player == null) yield break;
+
+            Debug.Log("[RunePower] EARTH — shield active");
+            player.TransitionToState(PlayerState.Shielded);
+            // Shield persists until hit (handled by PlayerController.TakeDamage)
+            EventBus.Publish(new RunePowerExpiredEvent { Type = (int)RuneType.Earth });
+            _activeSingleCoroutine = null;
+            yield break;
         }
 
         // ── Combo Activation ────────────────────────────────────────

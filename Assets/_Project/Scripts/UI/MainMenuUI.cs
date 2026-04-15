@@ -183,7 +183,10 @@ namespace RuneDrop.UI
             _weeklyCountdownText = UIHelper.MakeText(ct, "Countdown", new Vector2(0.5f, 0.89f), "", 20, UIHelper.TextMuted);
 
             _titleText = UIHelper.MakeGlowText(ct, "Title", new Vector2(0.5f, 0.76f), "RUNE DROP", 90, UIHelper.AccentCyan);
-            UIHelper.MakeText(ct, "Sub", new Vector2(0.5f, 0.70f), "Arcane descent · Precision dodging · Rune mastery", 24, UIHelper.TextDim);
+            UIHelper.MakeText(ct, "Lore", new Vector2(0.5f, 0.71f),
+                "The Runekeeper fell into the abyss...", 22, new Color(0.5f, 0.4f, 0.7f));
+            UIHelper.MakeText(ct, "Sub", new Vector2(0.5f, 0.68f),
+                "Collect runes. Master combos. Survive the descent.", 20, UIHelper.TextDim);
             UIHelper.MakeDivider(ct, "TitleDiv", 0.675f);
 
             UIHelper.MakeCard(ct, "DepthCard", new Vector2(0.06f, 0.56f), new Vector2(0.47f, 0.66f), new Color(0.07f, 0.1f, 0.18f, 0.95f), new Color(0.35f, 0.7f, 0.95f, 0.3f));
