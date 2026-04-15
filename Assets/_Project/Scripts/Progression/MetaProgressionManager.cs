@@ -25,8 +25,8 @@ namespace RuneDrop.Progression
             new UpgradeDefinition
             {
                 Id = "anchor_charges",
-                Name = "+1 Anchor Charge",
-                Description = "Extra anchor charge per run",
+                Name = "+1 Anchor",
+                Description = "More slow-fall taps per run (start: 2)",
                 MaxLevel = 3,
                 Costs = new[] { 50, 150, 400 }
             },
@@ -34,15 +34,15 @@ namespace RuneDrop.Progression
             {
                 Id = "slow_fall",
                 Name = "Slower Fall",
-                Description = "-10% fall speed per level",
+                Description = "You fall 10% slower permanently",
                 MaxLevel = 5,
                 Costs = new[] { 30, 80, 200, 500, 1000 }
             },
             new UpgradeDefinition
             {
                 Id = "rune_spawn",
-                Name = "Rune Magnet",
-                Description = "+15% rune spawn rate",
+                Name = "More Runes",
+                Description = "15% more runes appear in the level",
                 MaxLevel = 5,
                 Costs = new[] { 40, 100, 250, 600, 1200 }
             },
@@ -50,15 +50,15 @@ namespace RuneDrop.Progression
             {
                 Id = "start_shield",
                 Name = "Start Shield",
-                Description = "Begin runs with Earth shield",
+                Description = "Every run starts with a free shield",
                 MaxLevel = 1,
                 Costs = new[] { 200 }
             },
             new UpgradeDefinition
             {
                 Id = "combo_extend",
-                Name = "Combo Duration",
-                Description = "+2s combo duration",
+                Name = "Longer Combos",
+                Description = "Combo powers last 2 sec longer",
                 MaxLevel = 3,
                 Costs = new[] { 60, 180, 500 }
             }

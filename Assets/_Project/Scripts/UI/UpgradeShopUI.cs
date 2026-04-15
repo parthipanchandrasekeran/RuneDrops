@@ -156,7 +156,10 @@ namespace RuneDrop.UI
             }
 
             UIHelper.MakeDivider(ct, "Div2", 0.24f);
-            UIHelper.MakeText(ct, "Hint", new Vector2(0.5f, 0.20f), "Tap a row to purchase · Tap PLAY AGAIN to continue", 20, UIHelper.TextDim);
+            UIHelper.MakeText(ct, "Info", new Vector2(0.5f, 0.225f),
+                "Upgrades are permanent — they help every future run!", 22, UIHelper.AccentGold);
+            UIHelper.MakeText(ct, "Hint", new Vector2(0.5f, 0.19f),
+                "Tap a row to buy · Green = can afford · Red = need more shards", 18, UIHelper.TextDim);
 
             UIHelper.MakeButton(ct, "Retry", new Vector2(0.2f, 0.04f), new Vector2(0.8f, 0.12f),
                 "PLAY AGAIN", 40, new Color(0.08f, 0.28f, 0.2f, 0.96f), UIHelper.AccentGreen);
