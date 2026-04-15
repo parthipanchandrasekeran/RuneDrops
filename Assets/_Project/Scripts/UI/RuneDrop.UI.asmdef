@@ -1,0 +1,23 @@
+{
+    "name": "RuneDrop.UI",
+    "rootNamespace": "RuneDrop.UI",
+    "references": [
+        "RuneDrop.Core",
+        "RuneDrop.Data",
+        "RuneDrop.Player",
+        "RuneDrop.Runes",
+        "RuneDrop.Anchor",
+        "RuneDrop.Decision",
+        "RuneDrop.Progression",
+        "RuneDrop.Utils"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,14 @@
+{
+    "name": "RuneDrop.Progression",
+    "rootNamespace": "RuneDrop.Progression",
+    "references": ["RuneDrop.Core", "RuneDrop.Data"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

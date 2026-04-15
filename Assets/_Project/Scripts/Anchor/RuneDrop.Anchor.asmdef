@@ -1,0 +1,14 @@
+{
+    "name": "RuneDrop.Anchor",
+    "rootNamespace": "RuneDrop.Anchor",
+    "references": ["RuneDrop.Core", "RuneDrop.Data", "RuneDrop.Player", "RuneDrop.Runes"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

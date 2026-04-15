@@ -1,0 +1,14 @@
+{
+    "name": "RuneDrop.Runes",
+    "rootNamespace": "RuneDrop.Runes",
+    "references": ["RuneDrop.Core", "RuneDrop.Data", "RuneDrop.Player"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
