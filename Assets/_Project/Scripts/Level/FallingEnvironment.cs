@@ -102,8 +102,8 @@ namespace RuneDrop.Level
             var sr = go.AddComponent<SpriteRenderer>();
             sr.sprite = SpriteHelper.WhiteSquare;
             // Vary the color slightly for each block
-            float shade = Random.Range(0.06f, 0.12f);
-            sr.color = new Color(shade, shade * 0.7f, shade * 1.4f, 0.7f);
+            float shade = Random.Range(0.04f, 0.08f);
+            sr.color = new Color(shade, shade * 0.7f, shade * 1.2f, 0.4f);
             sr.sortingOrder = -9;
 
             // Vary width for ruined look

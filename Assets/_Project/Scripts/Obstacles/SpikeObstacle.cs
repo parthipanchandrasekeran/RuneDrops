@@ -14,7 +14,7 @@ namespace RuneDrop.Obstacles
             sr.color = new Color(0.9f, 0.1f, 0.1f); // BRIGHT RED — danger
             sr.sortingOrder = 2;
 
-            float size = Mathf.Lerp(0.9f, 1.4f, Difficulty);
+            float size = Mathf.Lerp(0.5f, 0.8f, Difficulty);
             transform.localScale = new Vector3(size, size, 1f);
             transform.rotation = Quaternion.Euler(0, 0, Random.Range(0f, 360f));
         }

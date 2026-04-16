@@ -33,9 +33,9 @@ namespace RuneDrop.Runes
             _glowBG = glowGO.AddComponent<SpriteRenderer>();
             if (SpriteHelper.WhiteCircle != null)
                 _glowBG.sprite = SpriteHelper.WhiteCircle;
-            _glowBG.color = new Color(1f, 1f, 1f, 0.25f);
+            _glowBG.color = new Color(1f, 1f, 1f, 0.18f);
             _glowBG.sortingOrder = 3;
-            glowGO.transform.localScale = Vector3.one * 3f;
+            glowGO.transform.localScale = Vector3.one * 1.8f;
 
             // The rune itself (rotated 45 to look like diamond)
             _spriteRenderer = GetComponent<SpriteRenderer>();
@@ -54,7 +54,7 @@ namespace RuneDrop.Runes
             col.isTrigger = true;
             col.radius = 0.7f;
 
-            transform.localScale = Vector3.one * 0.8f;
+            transform.localScale = Vector3.one * 0.5f;
         }
 
         private void Update()
@@ -64,7 +64,7 @@ namespace RuneDrop.Runes
             float bob = Mathf.Sin(Time.time * 2.5f + _bobOffset) * 0.2f;
             transform.position = _basePosition + new Vector3(0f, bob, 0f);
 
-            float pulse = 0.8f + Mathf.Sin(Time.time * 3f + _bobOffset) * 0.08f;
+            float pulse = 0.5f + Mathf.Sin(Time.time * 3f + _bobOffset) * 0.05f;
             transform.localScale = Vector3.one * pulse;
 
             if (_glowBG != null)

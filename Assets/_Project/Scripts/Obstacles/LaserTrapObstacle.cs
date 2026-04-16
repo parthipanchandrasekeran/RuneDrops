@@ -29,7 +29,7 @@ namespace RuneDrop.Obstacles
             _beamRenderer = beamGO.AddComponent<SpriteRenderer>();
             _beamRenderer.sprite = CreateSquareSprite();
             _beamRenderer.sortingOrder = 3;
-            beamGO.transform.localScale = new Vector3(12f, 0.12f, 1f);
+            beamGO.transform.localScale = new Vector3(6f, 0.08f, 1f);
 
             _beamCollider = beamGO.AddComponent<BoxCollider2D>();
             _beamCollider.isTrigger = true;

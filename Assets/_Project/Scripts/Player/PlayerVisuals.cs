@@ -34,9 +34,9 @@ namespace RuneDrop.Player
             glowGO.transform.localPosition = Vector3.zero;
             _glowSprite = glowGO.AddComponent<SpriteRenderer>();
             _glowSprite.sprite = SpriteHelper.WhiteCircle;
-            _glowSprite.color = new Color(_baseColor.r, _baseColor.g, _baseColor.b, 0.2f);
+            _glowSprite.color = new Color(_baseColor.r, _baseColor.g, _baseColor.b, 0.15f);
             _glowSprite.sortingOrder = 9;
-            glowGO.transform.localScale = Vector3.one * 2.5f;
+            glowGO.transform.localScale = Vector3.one * 1.8f;
 
             // Main sprite on top
             _mainSprite.sortingOrder = 10;

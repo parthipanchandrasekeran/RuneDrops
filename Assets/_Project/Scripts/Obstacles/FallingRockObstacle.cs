@@ -17,7 +17,7 @@ namespace RuneDrop.Obstacles
             sr.color = new Color(0.7f, 0.15f, 0.1f); // RED-BROWN
             sr.sortingOrder = 2;
 
-            float size = Mathf.Lerp(1.0f, 1.5f, Difficulty);
+            float size = Mathf.Lerp(0.5f, 0.9f, Difficulty);
             transform.localScale = new Vector3(size, size, 1f);
 
             _fallSpeed = Mathf.Lerp(1f, 2f, Difficulty);

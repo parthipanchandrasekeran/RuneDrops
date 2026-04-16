@@ -9,12 +9,11 @@ namespace RuneDrop.Player
         private void Awake()
         {
             var sr = GetComponent<SpriteRenderer>();
-            if (sr.sprite == null)
-            {
-                sr.sprite = SpriteHelper.WhiteSquare;
-            }
-            // Ensure player is visible size on mobile
-            transform.localScale = new Vector3(0.9f, 0.9f, 1f);
+            // Use circle sprite for the player — looks like a glowing orb
+            sr.sprite = SpriteHelper.WhiteCircle;
+            sr.color = new Color(0.5f, 0.9f, 1f); // Bright cyan
+            sr.sortingOrder = 10;
+            transform.localScale = new Vector3(0.7f, 0.7f, 1f);
         }
     }
 }

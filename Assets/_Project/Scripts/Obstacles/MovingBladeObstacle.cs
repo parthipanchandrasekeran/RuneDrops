@@ -19,8 +19,8 @@ namespace RuneDrop.Obstacles
             sr.color = new Color(0.8f, 0.15f, 0.15f); // DARK RED
             sr.sortingOrder = 2;
 
-            float width = Mathf.Lerp(2f, 3.5f, Difficulty);
-            transform.localScale = new Vector3(width, 0.3f, 1f);
+            float width = Mathf.Lerp(1.2f, 2f, Difficulty);
+            transform.localScale = new Vector3(width, 0.15f, 1f);
 
             _startX = transform.position.x;
             _amplitude = Mathf.Lerp(1.5f, 3f, Difficulty);
