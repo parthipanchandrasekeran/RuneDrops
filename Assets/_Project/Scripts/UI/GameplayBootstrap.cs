@@ -84,6 +84,7 @@ namespace RuneDrop.UI
             // ── Falling Environment (visual speed cues) ────────────
             var envGO = new GameObject("FallingEnvironment");
             envGO.AddComponent<RuneDrop.Level.FallingEnvironment>();
+            envGO.AddComponent<RuneDrop.Level.SpeedVisualizer>();
 
             // ── Sprite Particles ─────────────────────────────────────
             var particlesGO = new GameObject("SpriteParticles");

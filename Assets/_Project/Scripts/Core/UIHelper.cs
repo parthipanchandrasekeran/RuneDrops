@@ -127,11 +127,8 @@ namespace RuneDrop.Core
             txt.fontSize = fontSize;
             txt.alignment = alignment;
             txt.color = color;
-            // Try multiple font names — Unity 6 may use different built-in font names
-            txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
-            if (txt.font == null) txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (txt.font == null) txt.font = Font.CreateDynamicFontFromOSFont("Arial", fontSize);
-            if (txt.font == null) txt.font = Font.CreateDynamicFontFromOSFont("Roboto", fontSize);
+            // Unity 6: LegacyRuntime.ttf is the only valid built-in font
+            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             if (txt.font == null) txt.font = Font.CreateDynamicFontFromOSFont("sans-serif", fontSize);
             txt.horizontalOverflow = HorizontalWrapMode.Overflow;
 
