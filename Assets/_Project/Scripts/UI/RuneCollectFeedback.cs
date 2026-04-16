@@ -90,8 +90,9 @@ namespace RuneDrop.UI
             txt.fontSize = fontSize;
             txt.alignment = TextAnchor.MiddleCenter;
             txt.color = color;
-            txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-            if (txt.font == null) txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            txt.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            if (txt.font == null) txt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (txt.font == null) txt.font = Font.CreateDynamicFontFromOSFont("sans-serif", fontSize);
 
             var outline = go.AddComponent<Outline>();
             outline.effectColor = new Color(0, 0, 0, 0.9f);
