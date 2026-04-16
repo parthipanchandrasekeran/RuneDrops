@@ -80,6 +80,7 @@ namespace RuneDrop.UI
             if (!UIHelper.GetTap(out tapPos)) return;
             float nx = tapPos.x / Screen.width;
             float ny = tapPos.y / Screen.height;
+            Debug.Log($"[MainMenu] Tap at nx={nx:F2} ny={ny:F2} raw=({tapPos.x:F0},{tapPos.y:F0}) screen=({Screen.width},{Screen.height})");
 
             // PLAY button opens mode select
             if (ny > 0.30f && ny < 0.53f)
@@ -100,8 +101,8 @@ namespace RuneDrop.UI
                 return;
             }
 
-            // Powers reference — center, y 0.13-0.20
-            if (nx > 0.2f && nx < 0.8f && ny > 0.12f && ny < 0.22f)
+            // Powers reference — center, y 0.15-0.24
+            if (nx > 0.2f && nx < 0.8f && ny > 0.15f && ny < 0.24f)
             {
                 if (_powers == null) _powers = FindFirstObjectByType<PowersReferenceUI>();
                 if (_powers != null)
@@ -113,8 +114,8 @@ namespace RuneDrop.UI
                 return;
             }
 
-            // Settings button — left side, bottom strip
-            if (nx < 0.47f && ny < 0.11f)
+            // Settings button — left side, bottom area (generous zone)
+            if (nx < 0.47f && ny < 0.15f)
             {
                 if (_settings == null) _settings = FindFirstObjectByType<SettingsScreenUI>();
                 if (_settings != null)
@@ -126,8 +127,8 @@ namespace RuneDrop.UI
                 return;
             }
 
-            // Leaderboard button — right side, bottom strip
-            if (nx > 0.53f && ny < 0.11f)
+            // Leaderboard button — right side, bottom area (generous zone)
+            if (nx > 0.53f && ny < 0.15f)
             {
                 if (_leaderboard == null) _leaderboard = FindFirstObjectByType<LeaderboardScreenUI>();
                 if (_leaderboard != null)
